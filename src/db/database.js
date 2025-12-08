@@ -45,69 +45,17 @@ class Database {
       phone: userData.phone,
       dateOfBirth: userData.dateOfBirth,
       address: userData.address || '',
-      balance: 15420.5,
+      balance: 10000,
       currency: 'USD',
       status: 'active',
       createdAt: new Date().toISOString(),
       createdBy: 'AI Agent',
-      transactions: this.generateInitialTransactions(),
     };
 
     this.data.users.push(newUser);
     this.saveData();
 
     return newUser;
-  }
-
-  // Generate initial transactions
-  generateInitialTransactions() {
-    return [
-      {
-        id: 'TXN-001',
-        type: 'credit',
-        amount: 2500.0,
-        description: 'Salary Deposit',
-        category: 'Income',
-        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        status: 'completed',
-      },
-      {
-        id: 'TXN-002',
-        type: 'debit',
-        amount: 85.2,
-        description: 'Grocery Store',
-        category: 'Shopping',
-        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        status: 'completed',
-      },
-      {
-        id: 'TXN-003',
-        type: 'debit',
-        amount: 45.0,
-        description: 'Internet Bill',
-        category: 'Utilities',
-        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        status: 'completed',
-      },
-      {
-        id: 'TXN-004',
-        type: 'credit',
-        amount: 150.0,
-        description: 'Refund - Amazon',
-        category: 'Refund',
-        date: new Date().toISOString(),
-        status: 'completed',
-      },
-      {
-        id: 'TXN-005',
-        type: 'debit',
-        amount: 12.5,
-        description: 'Coffee Shop',
-        category: 'Food & Dining',
-        date: new Date().toISOString(),
-        status: 'pending',
-      },
-    ];
   }
 
   // Check if user exists by email

@@ -962,60 +962,15 @@
     ></script>
 
     <script>
-      // Demo data - In production, this would come from API
-      const demoUser = {
+      // Demo data
+      const userId = 'USER-1765260000000'; // Sarah Anderson
+      let demoUser = {
         firstName: 'Sarah',
         lastName: 'Anderson',
         balance: 15420.5,
         currency: 'USD',
         accountNumber: 'ACC-4892',
-        transactions: [
-          {
-            id: 'TXN-001',
-            type: 'credit',
-            amount: 2500.0,
-            description: 'Salary Deposit',
-            category: 'Income',
-            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-            status: 'completed',
-          },
-          {
-            id: 'TXN-002',
-            type: 'debit',
-            amount: 85.2,
-            description: 'Grocery Store',
-            category: 'Shopping',
-            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-            status: 'completed',
-          },
-          {
-            id: 'TXN-003',
-            type: 'debit',
-            amount: 45.0,
-            description: 'Internet Bill',
-            category: 'Utilities',
-            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-            status: 'completed',
-          },
-          {
-            id: 'TXN-004',
-            type: 'credit',
-            amount: 150.0,
-            description: 'Refund - Amazon',
-            category: 'Refund',
-            date: new Date(),
-            status: 'completed',
-          },
-          {
-            id: 'TXN-005',
-            type: 'debit',
-            amount: 12.5,
-            description: 'Coffee Shop',
-            category: 'Food & Dining',
-            date: new Date(),
-            status: 'pending',
-          },
-        ],
+        transactions: [],
       };
 
       // Format currency
@@ -1051,9 +1006,36 @@
         return icons[category] || '💳';
       }
 
+      // Fetch transactions from API
+      async function fetchTransactions() {
+        try {
+          const response = await fetch(`/api/account/${userId}/transactions`);
+          const data = await response.json();
+
+          if (data.success && data.data.transactions) {
+            demoUser.transactions = data.data.transactions
+              .map(txn => ({
+                ...txn,
+                date: new Date(txn.date),
+              }))
+              .slice(0, 5); // Only show first 5 transactions on dashboard
+
+            renderTransactions();
+          }
+        } catch (error) {
+          console.error('Error fetching transactions:', error);
+        }
+      }
+
       // Render transactions
       function renderTransactions() {
         const container = document.getElementById('transactionsList');
+
+        if (demoUser.transactions.length === 0) {
+          container.innerHTML =
+            '<p style="text-align: center; color: var(--text-light);">No transactions yet</p>';
+          return;
+        }
 
         const html = demoUser.transactions
           .map(
@@ -1081,7 +1063,7 @@
       }
 
       // Initialize dashboard
-      function initDashboard() {
+      async function initDashboard() {
         // Set user info
         const fullName = `${demoUser.firstName} ${demoUser.lastName}`;
         const initials = `${demoUser.firstName[0]}${demoUser.lastName[0]}`;
@@ -1092,8 +1074,8 @@
         document.getElementById('accountNumber').textContent =
           `Account: •••• •••• ${demoUser.accountNumber.slice(-4)}`;
 
-        // Render transactions
-        renderTransactions();
+        // Fetch and render transactions from API
+        await fetchTransactions();
       }
 
       // Load dashboard when page is ready

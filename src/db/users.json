@@ -9,6 +9,8 @@
       "phone": "061111111",
       "dateOfBirth": "1995-05-08",
       "address": "test address 123",
+      "balance": 15000,
+      "currency": "USD",
       "status": "active",
       "createdAt": "2025-12-05T12:38:53.747Z",
       "createdBy": "AI Agent"
@@ -22,9 +24,26 @@
       "phone": "+0038762345678",
       "dateOfBirth": "1990-01-01",
       "address": "",
+      "balance": 10000,
+      "currency": "USD",
       "status": "active",
       "createdAt": "2025-12-08T01:35:36.724Z",
       "createdBy": "AI Agent"
+    },
+    {
+      "id": "USER-1765260000000",
+      "accountNumber": "ACC-4892",
+      "firstName": "Sarah",
+      "lastName": "Anderson",
+      "email": "sarah.anderson@example.com",
+      "phone": "+1234567890",
+      "dateOfBirth": "1992-03-15",
+      "address": "",
+      "balance": 15420.5,
+      "currency": "USD",
+      "status": "active",
+      "createdAt": "2025-12-08T17:00:00.000Z",
+      "createdBy": "System"
     }
   ]
 }

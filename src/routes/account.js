@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const database = require('../db/database');
+const fs = require('fs');
+const path = require('path');
 
 // Get account balance by user ID
 router.get('/:userId/balance', (req, res) => {
@@ -39,11 +41,21 @@ router.get('/:userId/transactions', (req, res) => {
         error: 'Account not found',
       });
     }
+
+    // Read transactions from JSON file
+    const transactionsPath = path.join(__dirname, '../db/transactions.json');
+    const transactionsData = JSON.parse(fs.readFileSync(transactionsPath, 'utf8'));
+
+    // Filter transactions for this user
+    const userTransactions = transactionsData.transactions.filter(
+      t => t.userId === req.params.userId || t.accountNumber === user.accountNumber
+    );
+
     res.json({
       success: true,
       data: {
         accountHolder: `${user.firstName} ${user.lastName}`,
-        transactions: user.transactions || [],
+        transactions: userTransactions,
       },
     });
   } catch (error) {
