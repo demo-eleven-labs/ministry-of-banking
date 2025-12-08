@@ -1,0 +1,1107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ministry of Banking - Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --primary-dark: #2563eb;
+        --primary-light: #1e3a8a;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --gold: #fbbf24;
+        --gold-light: #fcd34d;
+        --gold-dark: #f59e0b;
+        --text: #f1f5f9;
+        --text-light: #cbd5e1;
+        --text-lighter: #94a3b8;
+        --background: #0a1628;
+        --card-bg: rgba(15, 23, 42, 0.6);
+        --card-bg-solid: #1e293b;
+        --border: rgba(148, 163, 184, 0.1);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Powerful Modern Background */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        background: linear-gradient(135deg, #0a1628 0%, #0f2847 50%, #1a365d 100%);
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: -10%;
+        right: -20%;
+        width: 140%;
+        height: 140%;
+        z-index: -1;
+        background:
+          radial-gradient(ellipse at 80% 20%, rgba(0, 102, 255, 0.4) 0%, transparent 50%),
+          radial-gradient(ellipse at 20% 80%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+          radial-gradient(ellipse at 60% 60%, rgba(236, 72, 153, 0.2) 0%, transparent 40%);
+        animation: waveMotion 25s ease-in-out infinite;
+        filter: blur(60px);
+      }
+
+      .gradient-orb-1 {
+        position: fixed;
+        top: 10%;
+        right: 15%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: -1;
+        animation: float1 20s ease-in-out infinite;
+      }
+
+      .gradient-orb-2 {
+        position: fixed;
+        bottom: -10%;
+        left: -10%;
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(90px);
+        z-index: -1;
+        animation: float2 25s ease-in-out infinite reverse;
+      }
+
+      .gradient-orb-3 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(70px);
+        z-index: -1;
+        animation: float3 30s ease-in-out infinite;
+        transform: translate(-50%, -50%);
+      }
+
+      @keyframes waveMotion {
+        0%,
+        100% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+        33% {
+          transform: translate(-5%, 5%) rotate(5deg) scale(1.1);
+        }
+        66% {
+          transform: translate(5%, -5%) rotate(-5deg) scale(0.95);
+        }
+      }
+
+      @keyframes float1 {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(-30px, 40px);
+        }
+      }
+
+      @keyframes float2 {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(40px, -30px);
+        }
+      }
+
+      @keyframes float3 {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        33% {
+          transform: translate(-45%, -55%) rotate(120deg);
+        }
+        66% {
+          transform: translate(-55%, -45%) rotate(240deg);
+        }
+      }
+
+      .dashboard {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .logo {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05) rotate(5deg);
+      }
+
+      .logo img {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+      }
+
+      .brand-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .brand-subtitle {
+        font-size: 0.75rem;
+        color: var(--text-lighter);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.2);
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+
+      .greeting {
+        font-size: 0.875rem;
+        color: var(--text-light);
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      /* Balance Card */
+      .balance-card {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow:
+          var(--shadow-lg),
+          0 0 40px rgba(59, 130, 246, 0.3);
+        position: relative;
+        overflow: hidden;
+        animation: cardPulse 3s ease-in-out infinite;
+      }
+
+      @keyframes cardPulse {
+        0%,
+        100% {
+          box-shadow:
+            var(--shadow-lg),
+            0 0 40px rgba(59, 130, 246, 0.3);
+        }
+        50% {
+          box-shadow:
+            var(--shadow-lg),
+            0 0 60px rgba(59, 130, 246, 0.5);
+        }
+      }
+
+      .balance-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+      }
+
+      .balance-label {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+      }
+
+      .balance-amount {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        position: relative;
+        background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+      }
+
+      .account-number {
+        font-size: 0.875rem;
+        opacity: 0.8;
+        letter-spacing: 1px;
+      }
+
+      /* Quick Actions */
+      .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .action-btn {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+        border-color: var(--primary);
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      .action-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 0.75rem;
+        background: rgba(59, 130, 246, 0.15);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.5rem;
+      }
+
+      .action-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      /* Transactions Section */
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .view-all {
+        font-size: 0.875rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .transactions-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+      }
+
+      .transaction-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin: 0 -1rem;
+        border-bottom: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .transaction-item:hover {
+        background: rgba(59, 130, 246, 0.05);
+        transform: translateX(5px);
+      }
+
+      .transaction-item:last-child {
+        border-bottom: none;
+      }
+
+      .transaction-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+      }
+
+      .transaction-icon.credit {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+      }
+
+      .transaction-icon.debit {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+      }
+
+      .transaction-details {
+        flex: 1;
+      }
+
+      .transaction-name {
+        font-weight: 600;
+        color: var(--gold-light);
+        margin-bottom: 0.25rem;
+      }
+
+      .transaction-meta {
+        font-size: 0.875rem;
+        color: var(--text-light);
+      }
+
+      .transaction-amount {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .transaction-amount.credit {
+        color: var(--success);
+      }
+
+      .transaction-amount.debit {
+        color: var(--text);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+      }
+
+      .status-badge.pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+      }
+
+      .status-badge.completed {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow:
+          var(--shadow),
+          0 0 20px rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-change {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+      }
+
+      .stat-change.positive {
+        color: var(--success);
+      }
+
+      .stat-change.negative {
+        color: var(--danger);
+      }
+
+      /* Footer */
+      footer {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        color: var(--text-lighter);
+        font-size: 0.875rem;
+      }
+
+      /* Info Cards */
+      .info-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .info-card:hover {
+        transform: translateY(-3px);
+        box-shadow:
+          var(--shadow),
+          0 0 15px rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.3) !important;
+      }
+
+      .two-column-layout {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .dashboard {
+          padding: 1rem;
+        }
+
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .balance-amount {
+          font-size: 2.25rem;
+        }
+
+        .quick-actions {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .two-column-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Loading State */
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-light);
+      }
+
+      /* Floating Coins Animation */
+      .floating-coins {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .coin {
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0.15;
+        animation: floatCoin 15s infinite ease-in-out;
+      }
+
+      .coin:nth-child(1) {
+        left: 10%;
+        top: 20%;
+        animation-delay: 0s;
+        animation-duration: 12s;
+      }
+
+      .coin:nth-child(2) {
+        left: 80%;
+        top: 40%;
+        animation-delay: 2s;
+        animation-duration: 15s;
+      }
+
+      .coin:nth-child(3) {
+        left: 30%;
+        top: 60%;
+        animation-delay: 4s;
+        animation-duration: 18s;
+      }
+
+      .coin:nth-child(4) {
+        left: 70%;
+        top: 80%;
+        animation-delay: 6s;
+        animation-duration: 14s;
+      }
+
+      .coin:nth-child(5) {
+        left: 50%;
+        top: 30%;
+        animation-delay: 3s;
+        animation-duration: 16s;
+      }
+
+      .coin:nth-child(6) {
+        left: 20%;
+        top: 70%;
+        animation-delay: 5s;
+        animation-duration: 13s;
+      }
+
+      .coin:nth-child(7) {
+        left: 90%;
+        top: 15%;
+        animation-delay: 1s;
+        animation-duration: 17s;
+      }
+
+      .coin:nth-child(8) {
+        left: 40%;
+        top: 85%;
+        animation-delay: 7s;
+        animation-duration: 19s;
+      }
+
+      .coin:nth-child(9) {
+        left: 60%;
+        top: 10%;
+        animation-delay: 2.5s;
+        animation-duration: 14s;
+      }
+
+      .coin:nth-child(10) {
+        left: 15%;
+        top: 45%;
+        animation-delay: 4.5s;
+        animation-duration: 16s;
+      }
+
+      .coin:nth-child(11) {
+        left: 85%;
+        top: 60%;
+        animation-delay: 1.5s;
+        animation-duration: 15s;
+      }
+
+      .coin:nth-child(12) {
+        left: 35%;
+        top: 25%;
+        animation-delay: 6.5s;
+        animation-duration: 17s;
+      }
+
+      .coin:nth-child(13) {
+        left: 75%;
+        top: 50%;
+        animation-delay: 3.5s;
+        animation-duration: 13s;
+      }
+
+      .coin:nth-child(14) {
+        left: 25%;
+        top: 90%;
+        animation-delay: 5.5s;
+        animation-duration: 18s;
+      }
+
+      .coin:nth-child(15) {
+        left: 95%;
+        top: 35%;
+        animation-delay: 0.5s;
+        animation-duration: 14.5s;
+      }
+
+      .coin:nth-child(16) {
+        left: 45%;
+        top: 75%;
+        animation-delay: 7.5s;
+        animation-duration: 16.5s;
+      }
+
+      @keyframes floatCoin {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0.15;
+        }
+        25% {
+          transform: translateY(-30px) rotate(90deg);
+          opacity: 0.25;
+        }
+        50% {
+          transform: translateY(-60px) rotate(180deg);
+          opacity: 0.15;
+        }
+        75% {
+          transform: translateY(-30px) rotate(270deg);
+          opacity: 0.25;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Animated Gradient Orbs -->
+    <div class="gradient-orb-1"></div>
+    <div class="gradient-orb-2"></div>
+    <div class="gradient-orb-3"></div>
+
+    <!-- Floating Coins -->
+    <div class="floating-coins">
+      <div class="coin">💰</div>
+      <div class="coin">💳</div>
+      <div class="coin">💰</div>
+      <div class="coin">💳</div>
+      <div class="coin">💰</div>
+      <div class="coin">💳</div>
+      <div class="coin">💰</div>
+      <div class="coin">💳</div>
+      <div class="coin">💰</div>
+      <div class="coin">💳</div>
+      <div class="coin">💰</div>
+      <div class="coin">💳</div>
+      <div class="coin">💰</div>
+      <div class="coin">💳</div>
+      <div class="coin">💰</div>
+      <div class="coin">💳</div>
+    </div>
+
+    <div class="dashboard">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-section">
+          <div class="logo">
+            <img src="logo.svg" alt="Ministry of Banking Logo" />
+          </div>
+          <div>
+            <div class="brand-name">Ministry of Banking</div>
+            <div class="brand-subtitle">Digital Banking</div>
+          </div>
+        </div>
+        <div class="user-info">
+          <div>
+            <div class="greeting">Good day,</div>
+            <div class="user-name" id="userName">John Doe</div>
+          </div>
+          <div class="user-avatar" id="userAvatar">JD</div>
+        </div>
+      </header>
+
+      <!-- Balance Card -->
+      <div class="balance-card">
+        <div class="balance-label">Total Balance</div>
+        <div class="balance-amount" id="totalBalance">$15,420.50</div>
+        <div class="account-number" id="accountNumber">Account: •••• •••• 4892</div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <div class="action-btn">
+          <div class="action-icon">💸</div>
+          <div class="action-label">Transfer</div>
+        </div>
+        <div class="action-btn">
+          <div class="action-icon">💳</div>
+          <div class="action-label">Pay Bills</div>
+        </div>
+        <div class="action-btn">
+          <div class="action-icon">📱</div>
+          <div class="action-label">Top Up</div>
+        </div>
+        <div class="action-btn">
+          <div class="action-icon">📊</div>
+          <div class="action-label">Analytics</div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Income (This Month)</div>
+          <div class="stat-value">$2,650.00</div>
+          <div class="stat-change positive">↑ 12.5%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Expenses (This Month)</div>
+          <div class="stat-value">$1,142.70</div>
+          <div class="stat-change negative">↑ 8.2%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Savings Goal</div>
+          <div class="stat-value">68%</div>
+          <div class="stat-change positive">↑ 5%</div>
+        </div>
+      </div>
+
+      <!-- Two Column Layout -->
+      <div class="two-column-layout">
+        <!-- Left Column - Account Info -->
+        <div>
+          <div class="section-header" style="margin-bottom: 1rem">
+            <h2 class="section-title">Account Info</h2>
+          </div>
+
+          <!-- Account Status Card -->
+          <div
+            class="info-card"
+            style="
+              background: var(--card-bg);
+              backdrop-filter: blur(10px);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              padding: 1.25rem;
+              margin-bottom: 1rem;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem">
+              <div style="font-size: 1.5rem">✅</div>
+              <div>
+                <div style="font-weight: 600; color: var(--text); font-size: 0.875rem">
+                  Account Status
+                </div>
+                <div style="color: var(--success); font-size: 0.875rem">Active & Verified</div>
+              </div>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-light)">Member since Dec 2025</div>
+          </div>
+
+          <!-- Card Info -->
+          <div
+            class="info-card"
+            style="
+              background: var(--card-bg);
+              backdrop-filter: blur(10px);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              padding: 1.25rem;
+              margin-bottom: 1rem;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem">
+              <div style="font-size: 1.5rem">💳</div>
+              <div>
+                <div style="font-weight: 600; color: var(--text); font-size: 0.875rem">
+                  Active Cards
+                </div>
+                <div style="color: var(--text-light); font-size: 0.875rem">2 Cards</div>
+              </div>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-light)">Debit Card •••• 4892</div>
+          </div>
+
+          <!-- Security -->
+          <div
+            class="info-card"
+            style="
+              background: var(--card-bg);
+              backdrop-filter: blur(10px);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              padding: 1.25rem;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem">
+              <div style="font-size: 1.5rem">🔒</div>
+              <div>
+                <div style="font-weight: 600; color: var(--text); font-size: 0.875rem">
+                  Security
+                </div>
+                <div style="color: var(--success); font-size: 0.875rem">Protected</div>
+              </div>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-light)">
+              2FA Enabled • SSL Secured
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Transactions -->
+        <div>
+          <div class="section-header" style="margin-bottom: 1rem">
+            <h2 class="section-title">Recent Transactions</h2>
+            <a href="transactions.html" class="view-all">View All →</a>
+          </div>
+
+          <div class="transactions-card" id="transactionsList">
+            <div class="loading">Loading transactions...</div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>© 2025 Ministry of Banking. All rights reserved. | Secured by 256-bit encryption</p>
+      </footer>
+    </div>
+
+    <!-- ElevenLabs AI Agent Widget (Bottom-Right) -->
+    <elevenlabs-convai agent-id="agent_3501kbmer3rzeaz9hb07r6jtsbzq"></elevenlabs-convai>
+    <script
+      src="https://unpkg.com/@elevenlabs/convai-widget-embed"
+      async
+      type="text/javascript"
+    ></script>
+
+    <script>
+      // Demo data - In production, this would come from API
+      const demoUser = {
+        firstName: 'Sarah',
+        lastName: 'Anderson',
+        balance: 15420.5,
+        currency: 'USD',
+        accountNumber: 'ACC-4892',
+        transactions: [
+          {
+            id: 'TXN-001',
+            type: 'credit',
+            amount: 2500.0,
+            description: 'Salary Deposit',
+            category: 'Income',
+            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+            status: 'completed',
+          },
+          {
+            id: 'TXN-002',
+            type: 'debit',
+            amount: 85.2,
+            description: 'Grocery Store',
+            category: 'Shopping',
+            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+            status: 'completed',
+          },
+          {
+            id: 'TXN-003',
+            type: 'debit',
+            amount: 45.0,
+            description: 'Internet Bill',
+            category: 'Utilities',
+            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+            status: 'completed',
+          },
+          {
+            id: 'TXN-004',
+            type: 'credit',
+            amount: 150.0,
+            description: 'Refund - Amazon',
+            category: 'Refund',
+            date: new Date(),
+            status: 'completed',
+          },
+          {
+            id: 'TXN-005',
+            type: 'debit',
+            amount: 12.5,
+            description: 'Coffee Shop',
+            category: 'Food & Dining',
+            date: new Date(),
+            status: 'pending',
+          },
+        ],
+      };
+
+      // Format currency
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(amount);
+      }
+
+      // Format date
+      function formatDate(date) {
+        const now = new Date();
+        const diff = now - date;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        if (days === 0) return 'Today';
+        if (days === 1) return 'Yesterday';
+        if (days < 7) return `${days} days ago`;
+
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+
+      // Get transaction icon
+      function getTransactionIcon(category) {
+        const icons = {
+          Income: '💰',
+          Shopping: '🛒',
+          Utilities: '⚡',
+          Refund: '↩️',
+          'Food & Dining': '☕',
+        };
+        return icons[category] || '💳';
+      }
+
+      // Render transactions
+      function renderTransactions() {
+        const container = document.getElementById('transactionsList');
+
+        const html = demoUser.transactions
+          .map(
+            txn => `
+                <div class="transaction-item">
+                    <div class="transaction-icon ${txn.type}">
+                        ${getTransactionIcon(txn.category)}
+                    </div>
+                    <div class="transaction-details">
+                        <div class="transaction-name">${txn.description}</div>
+                        <div class="transaction-meta">
+                            ${txn.category} • ${formatDate(txn.date)}
+                            <span class="status-badge ${txn.status}">${txn.status}</span>
+                        </div>
+                    </div>
+                    <div class="transaction-amount ${txn.type}">
+                        ${txn.type === 'credit' ? '+' : '-'}${formatCurrency(txn.amount)}
+                    </div>
+                </div>
+            `
+          )
+          .join('');
+
+        container.innerHTML = html;
+      }
+
+      // Initialize dashboard
+      function initDashboard() {
+        // Set user info
+        const fullName = `${demoUser.firstName} ${demoUser.lastName}`;
+        const initials = `${demoUser.firstName[0]}${demoUser.lastName[0]}`;
+
+        document.getElementById('userName').textContent = fullName;
+        document.getElementById('userAvatar').textContent = initials;
+        document.getElementById('totalBalance').textContent = formatCurrency(demoUser.balance);
+        document.getElementById('accountNumber').textContent =
+          `Account: •••• •••• ${demoUser.accountNumber.slice(-4)}`;
+
+        // Render transactions
+        renderTransactions();
+      }
+
+      // Load dashboard when page is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDashboard);
+      } else {
+        initDashboard();
+      }
+    </script>
+  </body>
+</html>

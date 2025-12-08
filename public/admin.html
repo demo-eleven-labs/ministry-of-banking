@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Ministry of Banking</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --success: #10b981;
+        --text: #1e293b;
+        --text-light: #64748b;
+        --background: #f8fafc;
+        --card-bg: #ffffff;
+        --border: #e2e8f0;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      header {
+        background: white;
+        padding: 1.5rem 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .header-logo {
+        width: 48px;
+        height: 48px;
+        transition: transform 0.3s ease;
+      }
+
+      .header-logo:hover {
+        transform: scale(1.05) rotate(5deg);
+      }
+
+      .header-logo img {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+      }
+
+      h1 {
+        color: var(--text);
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-card h3 {
+        color: var(--text-light);
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-card .value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .users-table {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .table-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .table-header h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .refresh-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+
+      .refresh-btn:hover {
+        background: var(--primary-dark);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: var(--background);
+      }
+
+      th {
+        padding: 1rem 1.5rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      td {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--border);
+      }
+
+      tbody tr:hover {
+        background: var(--background);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .status-active {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-light);
+      }
+
+      .empty-state svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-light);
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .spinner {
+        border: 3px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-logo">
+        <img src="logo.svg" alt="Ministry of Banking Logo" />
+      </div>
+      <h1>Ministry of Banking - Admin Dashboard</h1>
+    </header>
+
+    <div class="container">
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Total Users</h3>
+          <div class="value" id="totalUsers">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Active Accounts</h3>
+          <div class="value" id="activeUsers">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>New Today</h3>
+          <div class="value" id="newToday">0</div>
+        </div>
+      </div>
+
+      <div class="users-table">
+        <div class="table-header">
+          <h2>Registered Users</h2>
+          <button class="refresh-btn" onclick="loadUsers()">🔄 Refresh</button>
+        </div>
+
+        <div id="tableContent">
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading users...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function loadUsers() {
+        const tableContent = document.getElementById('tableContent');
+        tableContent.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading users...</p>
+                </div>
+            `;
+
+        try {
+          const response = await fetch('/api/users');
+          const data = await response.json();
+
+          if (data.success && data.users.length > 0) {
+            // Update stats
+            document.getElementById('totalUsers').textContent = data.count;
+            document.getElementById('activeUsers').textContent = data.users.filter(
+              u => u.status === 'active'
+            ).length;
+
+            // Calculate new users today
+            const today = new Date().toDateString();
+            const newToday = data.users.filter(
+              u => new Date(u.createdAt).toDateString() === today
+            ).length;
+            document.getElementById('newToday').textContent = newToday;
+
+            // Build table
+            let tableHTML = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Account Number</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Date of Birth</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+            data.users.forEach(user => {
+              const createdDate = new Date(user.createdAt).toLocaleString();
+              tableHTML += `
+                            <tr>
+                                <td><strong>${user.id}</strong></td>
+                                <td>${user.accountNumber}</td>
+                                <td>${user.firstName} ${user.lastName}</td>
+                                <td>${user.email}</td>
+                                <td>${user.phone}</td>
+                                <td>${user.dateOfBirth}</td>
+                                <td><span class="status-badge status-${user.status}">${user.status}</span></td>
+                                <td>${createdDate}</td>
+                            </tr>
+                        `;
+            });
+
+            tableHTML += `
+                            </tbody>
+                        </table>
+                    `;
+
+            tableContent.innerHTML = tableHTML;
+          } else {
+            tableContent.innerHTML = `
+                        <div class="empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <h3>No users yet</h3>
+                            <p>Users created by the AI agent will appear here</p>
+                        </div>
+                    `;
+          }
+        } catch (error) {
+          console.error('Error loading users:', error);
+          tableContent.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error loading users</h3>
+                        <p>${error.message}</p>
+                        <button class="refresh-btn" onclick="loadUsers()">Try Again</button>
+                    </div>
+                `;
+        }
+      }
+
+      // Load users on page load
+      loadUsers();
+
+      // Auto-refresh every 30 seconds
+      setInterval(loadUsers, 30000);
+    </script>
+  </body>
+</html>

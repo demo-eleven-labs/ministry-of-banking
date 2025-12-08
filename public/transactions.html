@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Transactions - Ministry of Banking</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --primary-dark: #2563eb;
+        --primary-light: #1e3a8a;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --gold: #fbbf24;
+        --gold-light: #fcd34d;
+        --gold-dark: #f59e0b;
+        --text: #f1f5f9;
+        --text-light: #cbd5e1;
+        --text-lighter: #94a3b8;
+        --background: #0a1628;
+        --card-bg: rgba(15, 23, 42, 0.6);
+        --card-bg-solid: #1e293b;
+        --border: rgba(148, 163, 184, 0.1);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Background */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        background: linear-gradient(135deg, #0a1628 0%, #0f2847 50%, #1a365d 100%);
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: -10%;
+        right: -20%;
+        width: 140%;
+        height: 140%;
+        z-index: -1;
+        background:
+          radial-gradient(ellipse at 80% 20%, rgba(0, 102, 255, 0.4) 0%, transparent 50%),
+          radial-gradient(ellipse at 20% 80%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+          radial-gradient(ellipse at 60% 60%, rgba(236, 72, 153, 0.2) 0%, transparent 40%);
+        animation: waveMotion 25s ease-in-out infinite;
+        filter: blur(60px);
+      }
+
+      @keyframes waveMotion {
+        0%,
+        100% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+        33% {
+          transform: translate(-5%, 5%) rotate(5deg) scale(1.1);
+        }
+        66% {
+          transform: translate(5%, -5%) rotate(-5deg) scale(0.95);
+        }
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .logo {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05) rotate(5deg);
+      }
+
+      .logo img {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+      }
+
+      .brand-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .back-btn:hover {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: var(--primary);
+        transform: translateX(-3px);
+      }
+
+      /* Page Title */
+      .page-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+      }
+
+      .page-subtitle {
+        color: var(--text-light);
+        margin-bottom: 2rem;
+      }
+
+      /* Filter Bar */
+      .filter-bar {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 0.75rem 1.5rem;
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      /* Transactions List */
+      .transactions-list {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+      }
+
+      .transaction-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin: 0 -1rem;
+        border-bottom: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .transaction-item:hover {
+        background: rgba(59, 130, 246, 0.05);
+        transform: translateX(5px);
+      }
+
+      .transaction-item:last-child {
+        border-bottom: none;
+      }
+
+      .transaction-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+      }
+
+      .transaction-icon.credit {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+      }
+
+      .transaction-icon.debit {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+      }
+
+      .transaction-details {
+        flex: 1;
+      }
+
+      .transaction-name {
+        font-weight: 600;
+        color: var(--gold-light);
+        margin-bottom: 0.25rem;
+      }
+
+      .transaction-meta {
+        font-size: 0.875rem;
+        color: var(--text-light);
+      }
+
+      .transaction-amount {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .transaction-amount.credit {
+        color: var(--success);
+      }
+
+      .transaction-amount.debit {
+        color: var(--text);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+      }
+
+      .status-badge.pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+      }
+
+      .status-badge.completed {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+      }
+
+      .status-badge.failed {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+      }
+
+      /* Month Divider */
+      .month-divider {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--gold);
+        margin: 2rem 0 1rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .page-title {
+          font-size: 1.5rem;
+        }
+
+        .filter-bar {
+          overflow-x: auto;
+          flex-wrap: nowrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-section">
+          <div class="logo">
+            <img src="logo.svg" alt="Ministry of Banking Logo" />
+          </div>
+          <div class="brand-name">Ministry of Banking</div>
+        </div>
+        <a href="index.html" class="back-btn"> ← Back to Dashboard </a>
+      </header>
+
+      <!-- Page Title -->
+      <h1 class="page-title">All Transactions</h1>
+      <p class="page-subtitle">Complete transaction history for your account</p>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Income</button>
+        <button class="filter-btn">Expenses</button>
+        <button class="filter-btn">Pending</button>
+        <button class="filter-btn">This Month</button>
+      </div>
+
+      <!-- Transactions List -->
+      <div class="transactions-list" id="allTransactionsList">
+        <div class="loading" style="text-align: center; padding: 2rem; color: var(--text-light)">
+          Loading transactions...
+        </div>
+      </div>
+    </div>
+
+    <!-- ElevenLabs AI Agent Widget -->
+    <elevenlabs-convai agent-id="agent_3501kbmer3rzeaz9hb07r6jtsbzq"></elevenlabs-convai>
+    <script
+      src="https://unpkg.com/@elevenlabs/convai-widget-embed"
+      async
+      type="text/javascript"
+    ></script>
+
+    <script>
+      // Extended transaction data
+      const allTransactions = [
+        // December 2025
+        {
+          id: 'TXN-001',
+          type: 'credit',
+          amount: 2500.0,
+          description: 'Salary Deposit',
+          category: 'Income',
+          date: new Date('2025-12-08'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-002',
+          type: 'debit',
+          amount: 85.2,
+          description: 'Grocery Store',
+          category: 'Shopping',
+          date: new Date('2025-12-07'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-003',
+          type: 'debit',
+          amount: 45.0,
+          description: 'Internet Bill',
+          category: 'Utilities',
+          date: new Date('2025-12-07'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-004',
+          type: 'credit',
+          amount: 150.0,
+          description: 'Refund - Amazon',
+          category: 'Refund',
+          date: new Date('2025-12-06'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-005',
+          type: 'debit',
+          amount: 12.5,
+          description: 'Coffee Shop',
+          category: 'Food & Dining',
+          date: new Date('2025-12-05'),
+          status: 'pending',
+        },
+        {
+          id: 'TXN-006',
+          type: 'debit',
+          amount: 120.0,
+          description: 'Gas Station',
+          category: 'Transportation',
+          date: new Date('2025-12-05'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-007',
+          type: 'debit',
+          amount: 299.99,
+          description: 'Electronics Store',
+          category: 'Shopping',
+          date: new Date('2025-12-04'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-008',
+          type: 'credit',
+          amount: 75.0,
+          description: 'Freelance Payment',
+          category: 'Income',
+          date: new Date('2025-12-03'),
+          status: 'completed',
+        },
+        // November 2025
+        {
+          id: 'TXN-009',
+          type: 'debit',
+          amount: 1200.0,
+          description: 'Rent Payment',
+          category: 'Housing',
+          date: new Date('2025-11-30'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-010',
+          type: 'credit',
+          amount: 2500.0,
+          description: 'Salary Deposit',
+          category: 'Income',
+          date: new Date('2025-11-28'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-011',
+          type: 'debit',
+          amount: 89.99,
+          description: 'Gym Membership',
+          category: 'Health & Fitness',
+          date: new Date('2025-11-25'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-012',
+          type: 'debit',
+          amount: 156.4,
+          description: 'Restaurant',
+          category: 'Food & Dining',
+          date: new Date('2025-11-22'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-013',
+          type: 'debit',
+          amount: 45.0,
+          description: 'Phone Bill',
+          category: 'Utilities',
+          date: new Date('2025-11-20'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-014',
+          type: 'credit',
+          amount: 200.0,
+          description: 'Cashback Reward',
+          category: 'Refund',
+          date: new Date('2025-11-18'),
+          status: 'completed',
+        },
+        {
+          id: 'TXN-015',
+          type: 'debit',
+          amount: 67.8,
+          description: 'Online Shopping',
+          category: 'Shopping',
+          date: new Date('2025-11-15'),
+          status: 'completed',
+        },
+      ];
+
+      // Format currency
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(amount);
+      }
+
+      // Format date
+      function formatDate(date) {
+        return date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        });
+      }
+
+      // Get transaction icon
+      function getTransactionIcon(category) {
+        const icons = {
+          Income: '💰',
+          Shopping: '🛒',
+          Utilities: '⚡',
+          Refund: '↩️',
+          'Food & Dining': '☕',
+          Transportation: '🚗',
+          Housing: '🏠',
+          'Health & Fitness': '💪',
+        };
+        return icons[category] || '💳';
+      }
+
+      // Group transactions by month
+      function groupByMonth(transactions) {
+        const grouped = {};
+        transactions.forEach(txn => {
+          const monthYear = txn.date.toLocaleDateString('en-US', {
+            month: 'long',
+            year: 'numeric',
+          });
+          if (!grouped[monthYear]) {
+            grouped[monthYear] = [];
+          }
+          grouped[monthYear].push(txn);
+        });
+        return grouped;
+      }
+
+      // Render all transactions
+      function renderAllTransactions() {
+        const container = document.getElementById('allTransactionsList');
+        const grouped = groupByMonth(allTransactions);
+
+        let html = '';
+        Object.keys(grouped).forEach(month => {
+          html += `<div class="month-divider">${month}</div>`;
+          grouped[month].forEach(txn => {
+            html += `
+                        <div class="transaction-item">
+                            <div class="transaction-icon ${txn.type}">
+                                ${getTransactionIcon(txn.category)}
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-name">${txn.description}</div>
+                                <div class="transaction-meta">
+                                    ${txn.category} • ${formatDate(txn.date)}
+                                    <span class="status-badge ${txn.status}">${txn.status}</span>
+                                </div>
+                            </div>
+                            <div class="transaction-amount ${txn.type}">
+                                ${txn.type === 'credit' ? '+' : '-'}${formatCurrency(txn.amount)}
+                            </div>
+                        </div>
+                    `;
+          });
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Initialize
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderAllTransactions);
+      } else {
+        renderAllTransactions();
+      }
+
+      // Filter functionality
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          // Add filter logic here if needed
+        });
+      });
+    </script>
+  </body>
+</html>

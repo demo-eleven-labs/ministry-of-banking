@@ -1,0 +1,30 @@
+{
+  "users": [
+    {
+      "id": "USER-1764938333746",
+      "accountNumber": "ACC-HLRSNVOSU",
+      "firstName": "Amy",
+      "lastName": "Johnson",
+      "email": "amila@ministryofprogramming.com",
+      "phone": "061111111",
+      "dateOfBirth": "1995-05-08",
+      "address": "test address 123",
+      "status": "active",
+      "createdAt": "2025-12-05T12:38:53.747Z",
+      "createdBy": "AI Agent"
+    },
+    {
+      "id": "USER-1765157736724",
+      "accountNumber": "ACC-1P8YQ5OFW",
+      "firstName": "Amila",
+      "lastName": "Jakubovic",
+      "email": "amila1@ministryofprogramming.com",
+      "phone": "+0038762345678",
+      "dateOfBirth": "1990-01-01",
+      "address": "",
+      "status": "active",
+      "createdAt": "2025-12-08T01:35:36.724Z",
+      "createdBy": "AI Agent"
+    }
+  ]
+}
