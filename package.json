@@ -6,14 +6,16 @@
   "scripts": {
     "start": "node src/server.js",
     "format": "prettier --write \"**/*.{js,json,html,css,md}\"",
-    "format:check": "prettier --check \"**/*.{js,json,html,css,md}\""
+    "format:check": "prettier --check \"**/*.{js,json,html,css,md}\"",
+    "dev": "./node_modules/nodemon/bin/nodemon.js src/server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "body-parser": "^1.20.2"
+    "express": "^4.18.2"
   },
   "devDependencies": {
+    "nodemon": "^3.1.11",
     "prettier": "^3.1.0"
   }
 }

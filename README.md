@@ -62,6 +62,12 @@ CORS_ORIGIN=*
 npm start
 ```
 
+or (in dev environment with `nodemon` - a tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected).
+
+```bash
+npm run dev
+```
+
 5. **Access the application**
 
 - Frontend Dashboard: `http://localhost:3000`
