@@ -107,16 +107,17 @@ class Database {
   // Create new card
   createCard(cardData) {
     const cardId = `CARD-${Date.now()}`;
-    const cardNumber = this.generateCardNumber();
+    const fullCardNumber = this.generateCardNumber();
+    const last4Digits = fullCardNumber.slice(-4);
+    const maskedCardNumber = `**** **** **** ${last4Digits}`;
 
     const newCard = {
       id: cardId,
       userId: cardData.userId,
-      cardNumber: cardNumber,
+      cardNumber: maskedCardNumber,
       cardType: cardData.cardType || 'debit',
       cardBrand: cardData.cardBrand || 'Visa',
-      expiryDate: cardData.expiryDate || this.generateExpiryDate(),
-      cvv: cardData.cvv || this.generateCVV(),
+      expiryDate: this.generateExpiryDate(),
       status: 'active',
       issuedAt: new Date().toISOString(),
       cardholderName: cardData.cardholderName,
@@ -144,11 +145,6 @@ class Database {
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const year = String(now.getFullYear() + 3).slice(-2);
     return `${month}/${year}`;
-  }
-
-  // CVV - 3 digits
-  generateCVV() {
-    return String(Math.floor(Math.random() * 900) + 100);
   }
 }
 

@@ -37,12 +37,12 @@ router.get('/user/:userId/active', (req, res) => {
 // Issue new card
 router.post('/issue-card', (req, res) => {
   try {
-    const { email, cardType } = req.body;
+    const { email, cardType, dateOfBirth, accountNumber } = req.body;
 
-    if (!email) {
+    if (!email || !dateOfBirth || !accountNumber) {
       return res.status(400).json({
         success: false,
-        error: 'Email is required',
+        error: 'Email, date of birth, and account number are required for identity verification',
       });
     }
 
@@ -52,6 +52,14 @@ router.post('/issue-card', (req, res) => {
       return res.status(404).json({
         success: false,
         error: 'User not found with this email',
+      });
+    }
+
+    // Identity verification
+    if (user.dateOfBirth !== dateOfBirth || user.accountNumber !== accountNumber) {
+      return res.status(403).json({
+        success: false,
+        error: 'Identity verification failed. Date of birth or account number does not match.',
       });
     }
 
@@ -68,7 +76,7 @@ router.post('/issue-card', (req, res) => {
       message: `New ${newCard.cardType} card issued successfully`,
       data: {
         cardId: newCard.id,
-        cardNumber: `•••• •••• •••• ${newCard.cardNumber.slice(-4)}`,
+        cardNumber: newCard.cardNumber,
         cardType: newCard.cardType,
         cardBrand: newCard.cardBrand,
         expiryDate: newCard.expiryDate,
