@@ -40,6 +40,10 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'admin.html'));
 });
 
+app.get('/knowledge', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'knowledge_base.html'));
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log('═══════════════════════════════════════════════');
