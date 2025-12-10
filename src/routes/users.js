@@ -19,6 +19,29 @@ router.get('/', (req, res) => {
   }
 });
 
+// Get user by account number
+router.get('/filter/:accountNumber', (req, res) => {
+  try {
+    console.log("Fetching user with account number:", req.params.accountNumber);
+    const user = database.getUserAccountNumber(req.params.accountNumber);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found',
+      });
+    }
+    res.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 // Get user by email
 router.get('/:email', (req, res) => {
   try {

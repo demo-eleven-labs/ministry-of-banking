@@ -44,6 +44,36 @@
       "status": "active",
       "createdAt": "2025-12-08T17:00:00.000Z",
       "createdBy": "System"
+    },
+    {
+      "id": "USER-5678999",
+      "accountNumber": "ACC-5671",
+      "firstName": "John",
+      "lastName": "Smith",
+      "email": "john.smith@example.com",
+      "phone": "+1234567890",
+      "dateOfBirth": "1999-06-01",
+      "address": "",
+      "balance": 125.8,
+      "currency": "USD",
+      "status": "active",
+      "createdAt": "2025-12-08T17:00:00.000Z",
+      "createdBy": "System"
+    },
+    {
+      "id": "USER-5678999",
+      "accountNumber": "ACC-5671",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "email": "jane.doe@example.com",
+      "phone": "+38766111222",
+      "dateOfBirth": "1995-08-05",
+      "address": "Sarajevo 03",
+      "balance": 70.8,
+      "currency": "USD",
+      "status": "active",
+      "createdAt": "2025-12-08T17:00:00.000Z",
+      "createdBy": "System"
     }
   ]
 }

@@ -68,6 +68,13 @@ class Database {
     return this.data.users.find(user => user.email.toLowerCase() === email.toLowerCase());
   }
 
+  // Get user by account number
+  getUserAccountNumber(accountNumber) {
+    return this.data.users.find(
+      user => user.accountNumber.toLowerCase() === accountNumber.toLowerCase()
+    );
+  }
+
   // Get all users
   getAllUsers() {
     return this.data.users;
