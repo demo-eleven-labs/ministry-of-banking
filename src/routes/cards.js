@@ -91,4 +91,72 @@ router.post('/issue-card', (req, res) => {
   }
 });
 
+// Block card
+router.post('/block-card', (req, res) => {
+  try {
+    const { email, dateOfBirth, accountNumber, last4Digits, expiryDate } = req.body;
+
+    if (!email || !dateOfBirth || !accountNumber || !last4Digits || !expiryDate) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email, date of birth, account number, last 4 digits, and expiry date are required',
+      });
+    }
+
+    // Find user by email
+    const user = database.getUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found with this email',
+      });
+    }
+
+    if (user.dateOfBirth !== dateOfBirth || user.accountNumber !== accountNumber) {
+      return res.status(403).json({
+        success: false,
+        error: 'Identity verification failed. Date of birth or account number does not match.',
+      });
+    }
+
+    // Find card by last 4 digits and expiry date
+    const userCards = database.getUserCards(user.id);
+    const cardToBlock = userCards.find(
+      card => card.cardNumber.endsWith(last4Digits) && card.expiryDate === expiryDate
+    );
+
+    if (!cardToBlock) {
+      return res.status(404).json({
+        success: false,
+        error: 'Card not found with the provided last 4 digits and expiry date',
+      });
+    }
+
+    if (cardToBlock.status === 'blocked') {
+      return res.status(400).json({
+        success: false,
+        error: 'This card is already blocked',
+      });
+    }
+
+    database.updateCardStatus(cardToBlock.id, 'blocked');
+
+    res.status(200).json({
+      success: true,
+      message: 'Card has been blocked successfully',
+      data: {
+        cardId: cardToBlock.id,
+        cardNumber: cardToBlock.cardNumber,
+        cardType: cardToBlock.cardType,
+        status: 'blocked',
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 module.exports = router;

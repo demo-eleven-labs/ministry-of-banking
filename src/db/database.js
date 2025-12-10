@@ -146,6 +146,17 @@ class Database {
     const year = String(now.getFullYear() + 3).slice(-2);
     return `${month}/${year}`;
   }
+
+  // Update card status
+  updateCardStatus(cardId, newStatus) {
+    const card = this.data.cards.find(c => c.id === cardId);
+    if (card) {
+      card.status = newStatus;
+      this.saveData();
+      return card;
+    }
+    return null;
+  }
 }
 
 module.exports = new Database();
