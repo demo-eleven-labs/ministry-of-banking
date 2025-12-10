@@ -888,6 +888,7 @@
           <!-- Card Info -->
           <div
             class="info-card"
+            id="cardsInfoCard"
             style="
               background: var(--card-bg);
               backdrop-filter: blur(10px);
@@ -903,10 +904,14 @@
                 <div style="font-weight: 600; color: var(--text); font-size: 0.875rem">
                   Active Cards
                 </div>
-                <div style="color: var(--text-light); font-size: 0.875rem">2 Cards</div>
+                <div id="cardsCount" style="color: var(--text-light); font-size: 0.875rem">
+                  Loading...
+                </div>
               </div>
             </div>
-            <div style="font-size: 0.75rem; color: var(--text-light)">Debit Card •••• 4892</div>
+            <div id="cardsList" style="font-size: 0.75rem; color: var(--text-light)">
+              Loading cards...
+            </div>
           </div>
 
           <!-- Security -->
@@ -1027,6 +1032,45 @@
         }
       }
 
+      // Fetch user cards from API
+      async function fetchUserCards() {
+        try {
+          const response = await fetch(`/api/cards/user/${userId}/active`);
+          const data = await response.json();
+
+          if (data.success && data.data.cards) {
+            renderCards(data.data.cards);
+          }
+        } catch (error) {
+          console.error('Error fetching cards:', error);
+          document.getElementById('cardsCount').textContent = '0 Cards';
+          document.getElementById('cardsList').textContent = 'No cards available';
+        }
+      }
+
+      // Render cards
+      function renderCards(cards) {
+        const countElement = document.getElementById('cardsCount');
+        const listElement = document.getElementById('cardsList');
+
+        if (cards.length === 0) {
+          countElement.textContent = '0 Cards';
+          listElement.textContent = 'No active cards';
+          return;
+        }
+
+        countElement.textContent = `${cards.length} Card${cards.length > 1 ? 's' : ''}`;
+
+        const cardsList = cards
+          .map(
+            card =>
+              `${card.cardType.charAt(0).toUpperCase() + card.cardType.slice(1)} Card •••• ${card.cardNumber.slice(-4)}`
+          )
+          .join('<br>');
+
+        listElement.innerHTML = cardsList;
+      }
+
       // Render transactions
       function renderTransactions() {
         const container = document.getElementById('transactionsList');
@@ -1074,8 +1118,8 @@
         document.getElementById('accountNumber').textContent =
           `Account: •••• •••• ${demoUser.accountNumber.slice(-4)}`;
 
-        // Fetch and render transactions from API
-        await fetchTransactions();
+        // Fetch and render data from API
+        await Promise.all([fetchTransactions(), fetchUserCards()]);
       }
 
       // Load dashboard when page is ready

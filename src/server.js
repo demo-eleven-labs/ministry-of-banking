@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const usersRoutes = require('./routes/users');
 const accountRoutes = require('./routes/account');
 const commonRoutes = require('./routes/common');
+const cardsRoutes = require('./routes/cards');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/api/users', usersRoutes);
 app.use('/api/account', accountRoutes);
 app.use('/api/common', commonRoutes);
+app.use('/api/cards', cardsRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({

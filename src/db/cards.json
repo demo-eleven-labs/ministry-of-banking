@@ -1,0 +1,88 @@
+{
+  "cards": [
+    {
+      "id": "CARD-1765260000001",
+      "userId": "USER-1765260000000",
+      "cardNumber": "4532123456784892",
+      "cardType": "debit",
+      "cardBrand": "Visa",
+      "expiryDate": "12/2028",
+      "cvv": "123",
+      "status": "active",
+      "issuedAt": "2025-01-15T10:00:00.000Z",
+      "cardholderName": "Sarah Anderson"
+    },
+    {
+      "id": "CARD-1765260000002",
+      "userId": "USER-1765260000000",
+      "cardNumber": "5412345678901234",
+      "cardType": "credit",
+      "cardBrand": "Mastercard",
+      "expiryDate": "06/2027",
+      "cvv": "456",
+      "status": "active",
+      "issuedAt": "2025-03-20T14:30:00.000Z",
+      "cardholderName": "Sarah Anderson"
+    },
+    {
+      "id": "CARD-1764938333747",
+      "userId": "USER-1764938333746",
+      "cardNumber": "4532987654321098",
+      "cardType": "debit",
+      "cardBrand": "Visa",
+      "expiryDate": "09/2027",
+      "cvv": "789",
+      "status": "active",
+      "issuedAt": "2025-02-10T09:15:00.000Z",
+      "cardholderName": "Amy Johnson"
+    },
+    {
+      "id": "CARD-1765157736725",
+      "userId": "USER-1765157736724",
+      "cardNumber": "5412876543210987",
+      "cardType": "debit",
+      "cardBrand": "Mastercard",
+      "expiryDate": "11/2026",
+      "cvv": "321",
+      "status": "active",
+      "issuedAt": "2025-01-25T11:45:00.000Z",
+      "cardholderName": "Amila Jakubovic"
+    },
+    {
+      "id": "CARD-1765369169146",
+      "userId": "USER-1765260000000",
+      "cardNumber": "4532004471347135",
+      "cardType": "debit",
+      "cardBrand": "Visa",
+      "expiryDate": "12/28",
+      "cvv": "962",
+      "status": "active",
+      "issuedAt": "2025-12-10T12:19:29.146Z",
+      "cardholderName": "Sarah Anderson"
+    },
+    {
+      "id": "CARD-1765369729942",
+      "userId": "USER-1765260000000",
+      "cardNumber": "4532226524850611",
+      "cardType": "credit",
+      "cardBrand": "Visa",
+      "expiryDate": "12/28",
+      "cvv": "296",
+      "status": "active",
+      "issuedAt": "2025-12-10T12:28:49.942Z",
+      "cardholderName": "Sarah Anderson"
+    },
+    {
+      "id": "CARD-1765370943748",
+      "userId": "USER-1765260000000",
+      "cardNumber": "4532544676740788",
+      "cardType": "debit",
+      "cardBrand": "Visa",
+      "expiryDate": "12/28",
+      "cvv": "145",
+      "status": "active",
+      "issuedAt": "2025-12-10T12:49:03.750Z",
+      "cardholderName": "Sarah Anderson"
+    }
+  ]
+}

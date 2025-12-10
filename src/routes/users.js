@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
 // Get user by account number
 router.get('/filter/:accountNumber', (req, res) => {
   try {
-    console.log("Fetching user with account number:", req.params.accountNumber);
+    console.log('Fetching user with account number:', req.params.accountNumber);
     const user = database.getUserAccountNumber(req.params.accountNumber);
     if (!user) {
       return res.status(404).json({
