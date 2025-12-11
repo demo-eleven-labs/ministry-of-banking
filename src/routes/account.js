@@ -47,9 +47,9 @@ router.get('/:userId/transactions', (req, res) => {
     const transactionsData = JSON.parse(fs.readFileSync(transactionsPath, 'utf8'));
 
     // Filter transactions for this user
-    const userTransactions = transactionsData.transactions.filter(
-      t => t.userId === req.params.userId || t.accountNumber === user.accountNumber
-    );
+    const userTransactions = transactionsData.transactions
+      .filter(t => t.userId === req.params.userId || t.accountNumber === user.accountNumber)
+      .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date, newest first
 
     res.json({
       success: true,

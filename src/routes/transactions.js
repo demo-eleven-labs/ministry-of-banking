@@ -204,7 +204,9 @@ router.get('/:userId', (req, res) => {
     const { userId } = req.params;
     const transactionsData = readTransactions();
 
-    const userTransactions = transactionsData.transactions.filter(t => t.userId === userId);
+    const userTransactions = transactionsData.transactions
+      .filter(t => t.userId === userId)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
 
     res.json({
       success: true,
