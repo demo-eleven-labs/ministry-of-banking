@@ -122,23 +122,40 @@ router.get('/search', (req, res) => {
   }
 });
 
-// Create a dispute for a transaction
-router.post('/:userId/dispute', (req, res) => {
+// Create a dispute for a transaction by user email
+router.post('/dispute', (req, res) => {
   try {
-    const { userId } = req.params;
-    const { transactionId, reason } = req.body;
+    const { email, transactionId, reason } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'email is required',
+      });
+    }
 
     if (!transactionId) {
       return res.status(400).json({
         success: false,
-        error: 'Transaction ID is required',
+        error: 'transactionId is required',
+      });
+    }
+
+    // Get user by email
+    const database = require('../db/database');
+    const user = database.getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found with provided email',
       });
     }
 
     const transactionsData = readTransactions();
 
     const originalTransaction = transactionsData.transactions.find(
-      t => t.id === transactionId && t.userId === userId
+      t => t.id === transactionId && t.userId === user.id
     );
 
     if (!originalTransaction) {
@@ -151,7 +168,7 @@ router.post('/:userId/dispute', (req, res) => {
     const existingDispute = transactionsData.transactions.find(
       t =>
         t.description.includes(`Dispute - ${originalTransaction.description}`) &&
-        t.userId === userId
+        t.userId === user.id
     );
 
     if (existingDispute) {
@@ -165,7 +182,7 @@ router.post('/:userId/dispute', (req, res) => {
     // Create a credit transaction to "refund" the disputed amount
     const disputeTransaction = {
       id: `TXN-DISPUTE-${Date.now()}`,
-      userId: userId,
+      userId: user.id,
       accountNumber: originalTransaction.accountNumber,
       type: 'credit',
       amount: originalTransaction.amount,
