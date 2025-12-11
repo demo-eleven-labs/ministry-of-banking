@@ -7,6 +7,7 @@ const usersRoutes = require('./routes/users');
 const accountRoutes = require('./routes/account');
 const commonRoutes = require('./routes/common');
 const cardsRoutes = require('./routes/cards');
+const transactionsRoutes = require('./routes/transactions');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use('/api/users', usersRoutes);
 app.use('/api/account', accountRoutes);
 app.use('/api/common', commonRoutes);
 app.use('/api/cards', cardsRoutes);
+app.use('/api/transactions', transactionsRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({
