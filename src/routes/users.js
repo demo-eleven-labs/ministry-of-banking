@@ -64,6 +64,52 @@ router.get('/:email', (req, res) => {
   }
 });
 
+// Login user
+router.post('/login', (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email and password are required',
+      });
+    }
+
+    // Hardcoded password - should be "demo"
+    const HARDCODED_PASSWORD = 'demo';
+
+    // Check if password matches hardcoded value
+    if (password !== HARDCODED_PASSWORD) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid email or password',
+      });
+    }
+
+    // Find user by email
+    const user = database.getUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid email or password',
+      });
+    }
+
+    // Return user data (excluding sensitive information if needed)
+    res.json({
+      success: true,
+      message: 'Login successful',
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 // Create new user
 router.post('/create', async (req, res) => {
   try {

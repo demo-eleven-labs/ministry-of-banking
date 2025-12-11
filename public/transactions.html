@@ -166,6 +166,31 @@
         transform: translateX(-3px);
       }
 
+      .logout-btn {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--danger);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-left: 0.75rem;
+      }
+
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: var(--danger);
+        transform: translateY(-1px);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
       /* Page Title */
       .page-title {
         font-size: 2rem;
@@ -230,13 +255,79 @@
         cursor: pointer;
       }
 
-      .transaction-item:hover {
+      .transaction-item:hover:not(.expanded) {
         background: rgba(59, 130, 246, 0.05);
         transform: translateX(5px);
       }
 
       .transaction-item:last-child {
         border-bottom: none;
+      }
+
+      .transaction-item.expanded {
+        flex-direction: column;
+        align-items: flex-start;
+        background: rgba(59, 130, 246, 0.08);
+        padding-bottom: 1.5rem;
+      }
+
+      .transaction-item.expanded .transaction-main {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+      .transaction-main {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+      .transaction-expanded-details {
+        width: 100%;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+        display: none;
+        animation: slideDown 0.3s ease-out;
+      }
+
+      .transaction-item.expanded .transaction-expanded-details {
+        display: block;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        font-size: 0.875rem;
+      }
+
+      .detail-label {
+        color: var(--text-lighter);
+        font-weight: 500;
+      }
+
+      .detail-value {
+        color: var(--text-light);
+        font-weight: 600;
+      }
+
+      .detail-value.transaction-id {
+        font-family: 'Courier New', monospace;
+        font-size: 0.8rem;
+        color: var(--text-lighter);
       }
 
       .transaction-icon {
@@ -286,6 +377,17 @@
 
       .transaction-amount.debit {
         color: var(--text);
+      }
+
+      .expand-icon {
+        margin-left: 0.75rem;
+        color: var(--text-lighter);
+        font-size: 0.875rem;
+        transition: transform 0.3s ease;
+      }
+
+      .transaction-item.expanded .expand-icon {
+        transform: rotate(180deg);
       }
 
       .status-badge {
@@ -349,7 +451,10 @@
           </div>
           <div class="brand-name">Ministry of Banking</div>
         </div>
-        <a href="index.html" class="back-btn"> ← Back to Dashboard </a>
+        <div class="header-actions">
+          <a href="/" class="back-btn"> ← Back to Dashboard </a>
+          <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
       </header>
 
       <!-- Page Title -->
@@ -382,12 +487,44 @@
     ></script>
 
     <script>
-      // User ID for Sarah Anderson
-      const userId = 'USER-1765260000000';
+      // Get logged-in user from sessionStorage
+      let currentUser = null;
+      let userId = null;
+
+      // Check if user is logged in
+      function checkAuth() {
+        const userData = sessionStorage.getItem('user');
+        if (!userData) {
+          // Redirect to login if not authenticated
+          window.location.href = '/login';
+          return false;
+        }
+
+        try {
+          currentUser = JSON.parse(userData);
+          userId = currentUser.id;
+          return true;
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          sessionStorage.removeItem('user');
+          window.location.href = '/login';
+          return false;
+        }
+      }
+
+      // Logout handler
+      function handleLogout() {
+        sessionStorage.removeItem('user');
+        window.location.href = '/login';
+      }
 
       // Fetch transactions from API
       let allTransactions = [];
+      let currentFilter = 'all'; // Current active filter
+
       async function fetchTransactions() {
+        if (!userId) return;
+
         try {
           const response = await fetch(`/api/account/${userId}/transactions`);
           const data = await response.json();
@@ -398,11 +535,91 @@
               date: new Date(txn.date),
             }));
 
-            renderAllTransactions();
+            applyFilter(currentFilter);
+          } else {
+            // Show message if no transactions
+            const container = document.getElementById('allTransactionsList');
+            container.innerHTML =
+              '<p style="text-align: center; padding: 2rem; color: var(--text-light);">No transactions found</p>';
           }
         } catch (error) {
           console.error('Error fetching transactions:', error);
+          const container = document.getElementById('allTransactionsList');
+          container.innerHTML =
+            '<p style="text-align: center; padding: 2rem; color: var(--danger);">Error loading transactions. Please try again.</p>';
         }
+      }
+
+      // Filter transactions based on selected filter
+      function filterTransactions(filter) {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        let filtered = [...allTransactions];
+
+        switch (filter) {
+          case 'income':
+            filtered = filtered.filter(txn => txn.type === 'credit');
+            break;
+          case 'expenses':
+            filtered = filtered.filter(txn => txn.type === 'debit');
+            break;
+          case 'pending':
+            filtered = filtered.filter(txn => txn.status === 'pending');
+            break;
+          case 'this-month':
+            filtered = filtered.filter(txn => {
+              const txnDate = new Date(txn.date);
+              return (
+                txnDate.getMonth() === currentMonth &&
+                txnDate.getFullYear() === currentYear
+              );
+            });
+            break;
+          case 'all':
+          default:
+            // Show all transactions
+            break;
+        }
+
+        return filtered;
+      }
+
+      // Apply filter and re-render
+      function applyFilter(filter) {
+        currentFilter = filter;
+        const filteredTransactions = filterTransactions(filter);
+        
+        // Update page title based on filter
+        const pageTitle = document.querySelector('.page-title');
+        const pageSubtitle = document.querySelector('.page-subtitle');
+        
+        switch (filter) {
+          case 'income':
+            pageTitle.textContent = 'Income Transactions';
+            pageSubtitle.textContent = 'All credit transactions for your account';
+            break;
+          case 'expenses':
+            pageTitle.textContent = 'Expense Transactions';
+            pageSubtitle.textContent = 'All debit transactions for your account';
+            break;
+          case 'pending':
+            pageTitle.textContent = 'Pending Transactions';
+            pageSubtitle.textContent = 'Transactions awaiting completion';
+            break;
+          case 'this-month':
+            pageTitle.textContent = 'This Month\'s Transactions';
+            pageSubtitle.textContent = 'Transactions from the current month';
+            break;
+          case 'all':
+          default:
+            pageTitle.textContent = 'All Transactions';
+            pageSubtitle.textContent = 'Complete transaction history for your account';
+            break;
+        }
+        
+        renderAllTransactions(filteredTransactions);
       }
 
       // Format currency
@@ -419,6 +636,17 @@
           month: 'short',
           day: 'numeric',
           year: 'numeric',
+        });
+      }
+
+      // Format date and time
+      function formatDateTime(date) {
+        return date.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
         });
       }
 
@@ -454,28 +682,73 @@
       }
 
       // Render all transactions
-      function renderAllTransactions() {
+      function renderAllTransactions(transactionsToRender = null) {
         const container = document.getElementById('allTransactionsList');
-        const grouped = groupByMonth(allTransactions);
+        const transactions = transactionsToRender || allTransactions;
+
+        if (transactions.length === 0) {
+          container.innerHTML =
+            '<p style="text-align: center; padding: 2rem; color: var(--text-light);">No transactions found</p>';
+          return;
+        }
+
+        const grouped = groupByMonth(transactions);
 
         let html = '';
         Object.keys(grouped).forEach(month => {
           html += `<div class="month-divider">${month}</div>`;
           grouped[month].forEach(txn => {
             html += `
-                        <div class="transaction-item">
-                            <div class="transaction-icon ${txn.type}">
-                                ${getTransactionIcon(txn.category)}
-                            </div>
-                            <div class="transaction-details">
-                                <div class="transaction-name">${txn.description}</div>
-                                <div class="transaction-meta">
-                                    ${txn.category} • ${formatDate(txn.date)}
-                                    <span class="status-badge ${txn.status}">${txn.status}</span>
+                        <div class="transaction-item" onclick="toggleTransactionDetails('${txn.id}')">
+                            <div class="transaction-main">
+                                <div class="transaction-icon ${txn.type}">
+                                    ${getTransactionIcon(txn.category)}
+                                </div>
+                                <div class="transaction-details">
+                                    <div class="transaction-name">${txn.description}</div>
+                                    <div class="transaction-meta">
+                                        ${txn.category} • ${formatDate(txn.date)}
+                                        <span class="status-badge ${txn.status}">${txn.status}</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center;">
+                                    <div class="transaction-amount ${txn.type}">
+                                        ${txn.type === 'credit' ? '+' : '-'}${formatCurrency(txn.amount)}
+                                    </div>
+                                    <span class="expand-icon">▼</span>
                                 </div>
                             </div>
-                            <div class="transaction-amount ${txn.type}">
-                                ${txn.type === 'credit' ? '+' : '-'}${formatCurrency(txn.amount)}
+                            <div class="transaction-expanded-details" id="details-${txn.id}">
+                                <div class="detail-row">
+                                    <span class="detail-label">Transaction ID:</span>
+                                    <span class="detail-value transaction-id">${txn.id}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Account Number:</span>
+                                    <span class="detail-value">${txn.accountNumber || 'N/A'}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Type:</span>
+                                    <span class="detail-value" style="text-transform: capitalize;">${txn.type}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Category:</span>
+                                    <span class="detail-value">${txn.category}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Date & Time:</span>
+                                    <span class="detail-value">${formatDateTime(txn.date)}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Amount:</span>
+                                    <span class="detail-value" style="color: ${txn.type === 'credit' ? 'var(--success)' : 'var(--text)'}; font-weight: 700;">
+                                        ${txn.type === 'credit' ? '+' : '-'}${formatCurrency(txn.amount)}
+                                    </span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Status:</span>
+                                    <span class="status-badge ${txn.status}">${txn.status}</span>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -485,21 +758,64 @@
         container.innerHTML = html;
       }
 
-      // Initialize
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fetchTransactions);
-      } else {
-        fetchTransactions();
+      // Toggle transaction details
+      function toggleTransactionDetails(transactionId) {
+        const transactionItem = document.querySelector(`[onclick="toggleTransactionDetails('${transactionId}')"]`);
+        if (transactionItem) {
+          transactionItem.classList.toggle('expanded');
+        }
       }
 
       // Filter functionality
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-          // Add filter logic here if needed
+      function setupFilters() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(btn => {
+          btn.addEventListener('click', function () {
+            // Remove active class from all buttons
+            filterButtons.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Get filter type from button text
+            const filterText = this.textContent.trim().toLowerCase();
+            let filterType = 'all';
+            
+            if (filterText === 'income') {
+              filterType = 'income';
+            } else if (filterText === 'expenses') {
+              filterType = 'expenses';
+            } else if (filterText === 'pending') {
+              filterType = 'pending';
+            } else if (filterText === 'this month') {
+              filterType = 'this-month';
+            }
+            
+            // Apply the filter
+            applyFilter(filterType);
+          });
         });
-      });
+      }
+
+      // Initialize
+      function initTransactionsPage() {
+        // Check authentication first
+        if (!checkAuth()) {
+          return; // Will redirect to login
+        }
+
+        // Setup filter buttons
+        setupFilters();
+
+        // Fetch transactions for the logged-in user
+        fetchTransactions();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTransactionsPage);
+      } else {
+        initTransactionsPage();
+      }
     </script>
   </body>
 </html>

@@ -231,6 +231,25 @@
         gap: 0.75rem;
       }
 
+      .logout-btn {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--danger);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-left: 0.75rem;
+      }
+
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: var(--danger);
+        transform: translateY(-1px);
+      }
+
       .user-avatar {
         width: 40px;
         height: 40px;
@@ -801,9 +820,10 @@
         <div class="user-info">
           <div>
             <div class="greeting">Good day,</div>
-            <div class="user-name" id="userName">John Doe</div>
+            <div class="user-name" id="userName">Loading...</div>
           </div>
-          <div class="user-avatar" id="userAvatar">JD</div>
+          <div class="user-avatar" id="userAvatar">--</div>
+          <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">Logout</button>
         </div>
       </header>
 
@@ -838,18 +858,18 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-label">Income (This Month)</div>
-          <div class="stat-value">$2,650.00</div>
-          <div class="stat-change positive">↑ 12.5%</div>
+          <div class="stat-value" id="incomeValue">$0.00</div>
+          <div class="stat-change" id="incomeChange"></div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Expenses (This Month)</div>
-          <div class="stat-value">$1,142.70</div>
-          <div class="stat-change negative">↑ 8.2%</div>
+          <div class="stat-value" id="expensesValue">$0.00</div>
+          <div class="stat-change" id="expensesChange"></div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Savings Goal</div>
-          <div class="stat-value">68%</div>
-          <div class="stat-change positive">↑ 5%</div>
+          <div class="stat-value" id="savingsValue">0%</div>
+          <div class="stat-change" id="savingsChange"></div>
         </div>
       </div>
 
@@ -967,16 +987,36 @@
     ></script>
 
     <script>
-      // Demo data
-      const userId = 'USER-1765260000000'; // Sarah Anderson
-      let demoUser = {
-        firstName: 'Sarah',
-        lastName: 'Anderson',
-        balance: 15420.5,
-        currency: 'USD',
-        accountNumber: 'ACC-4892',
-        transactions: [],
-      };
+      // Get logged-in user from sessionStorage
+      let currentUser = null;
+      let userId = null;
+
+      // Check if user is logged in
+      function checkAuth() {
+        const userData = sessionStorage.getItem('user');
+        if (!userData) {
+          // Redirect to login if not authenticated
+          window.location.href = '/login';
+          return false;
+        }
+
+        try {
+          currentUser = JSON.parse(userData);
+          userId = currentUser.id;
+          return true;
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          sessionStorage.removeItem('user');
+          window.location.href = '/login';
+          return false;
+        }
+      }
+
+      // Logout handler
+      function handleLogout() {
+        sessionStorage.removeItem('user');
+        window.location.href = '/login';
+      }
 
       // Format currency
       function formatCurrency(amount) {
@@ -1011,29 +1051,104 @@
         return icons[category] || '💳';
       }
 
+      // Store all transactions for calculations
+      let allTransactions = [];
+
       // Fetch transactions from API
       async function fetchTransactions() {
+        if (!userId) return;
+
         try {
           const response = await fetch(`/api/account/${userId}/transactions`);
           const data = await response.json();
 
           if (data.success && data.data.transactions) {
-            demoUser.transactions = data.data.transactions
-              .map(txn => ({
-                ...txn,
-                date: new Date(txn.date),
-              }))
-              .slice(0, 5); // Only show first 5 transactions on dashboard
+            // Store all transactions with parsed dates
+            allTransactions = data.data.transactions.map(txn => ({
+              ...txn,
+              date: new Date(txn.date),
+            }));
+
+            // Only show first 5 transactions on dashboard
+            currentUser.transactions = allTransactions.slice(0, 5);
 
             renderTransactions();
+            calculateStats();
           }
         } catch (error) {
           console.error('Error fetching transactions:', error);
         }
       }
 
+      // Calculate stats from transactions
+      function calculateStats() {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        // Filter transactions for current month
+        const thisMonthTransactions = allTransactions.filter(txn => {
+          const txnDate = new Date(txn.date);
+          return (
+            txnDate.getMonth() === currentMonth &&
+            txnDate.getFullYear() === currentYear
+          );
+        });
+
+        // Calculate income (credit transactions)
+        const income = thisMonthTransactions
+          .filter(txn => txn.type === 'credit')
+          .reduce((sum, txn) => sum + (txn.amount || 0), 0);
+
+        // Calculate expenses (debit transactions)
+        const expenses = thisMonthTransactions
+          .filter(txn => txn.type === 'debit')
+          .reduce((sum, txn) => sum + (txn.amount || 0), 0);
+
+        // Calculate savings percentage
+        // Savings = (Income - Expenses) / Income * 100
+        const savingsPercentage =
+          income > 0 ? Math.round(((income - expenses) / income) * 100) : 0;
+
+        // Update UI
+        document.getElementById('incomeValue').textContent = formatCurrency(income);
+        document.getElementById('expensesValue').textContent = formatCurrency(expenses);
+        document.getElementById('savingsValue').textContent = `${savingsPercentage}%`;
+
+        // Update change indicators (simplified - can be enhanced with previous month comparison)
+        const incomeChangeEl = document.getElementById('incomeChange');
+        const expensesChangeEl = document.getElementById('expensesChange');
+        const savingsChangeEl = document.getElementById('savingsChange');
+
+        if (income > 0) {
+          incomeChangeEl.textContent = '✓ This Month';
+          incomeChangeEl.className = 'stat-change positive';
+        } else {
+          incomeChangeEl.textContent = 'No income';
+          incomeChangeEl.className = 'stat-change';
+        }
+
+        if (expenses > 0) {
+          expensesChangeEl.textContent = '✓ This Month';
+          expensesChangeEl.className = 'stat-change negative';
+        } else {
+          expensesChangeEl.textContent = 'No expenses';
+          expensesChangeEl.className = 'stat-change';
+        }
+
+        if (savingsPercentage >= 0) {
+          savingsChangeEl.textContent = savingsPercentage >= 20 ? '✓ Good' : '✓ On track';
+          savingsChangeEl.className = 'stat-change positive';
+        } else {
+          savingsChangeEl.textContent = 'Over budget';
+          savingsChangeEl.className = 'stat-change negative';
+        }
+      }
+
       // Fetch user cards from API
       async function fetchUserCards() {
+        if (!userId) return;
+
         try {
           const response = await fetch(`/api/cards/user/${userId}/active`);
           const data = await response.json();
@@ -1075,13 +1190,13 @@
       function renderTransactions() {
         const container = document.getElementById('transactionsList');
 
-        if (demoUser.transactions.length === 0) {
+        if (!currentUser.transactions || currentUser.transactions.length === 0) {
           container.innerHTML =
             '<p style="text-align: center; color: var(--text-light);">No transactions yet</p>';
           return;
         }
 
-        const html = demoUser.transactions
+        const html = currentUser.transactions
           .map(
             txn => `
                 <div class="transaction-item">
@@ -1108,15 +1223,25 @@
 
       // Initialize dashboard
       async function initDashboard() {
-        // Set user info
-        const fullName = `${demoUser.firstName} ${demoUser.lastName}`;
-        const initials = `${demoUser.firstName[0]}${demoUser.lastName[0]}`;
+        // Check authentication first
+        if (!checkAuth()) {
+          return; // Will redirect to login
+        }
+
+        // Initialize transactions array if not present
+        if (!currentUser.transactions) {
+          currentUser.transactions = [];
+        }
+
+        // Set user info from logged-in user
+        const fullName = `${currentUser.firstName} ${currentUser.lastName}`;
+        const initials = `${currentUser.firstName[0]}${currentUser.lastName[0]}`;
 
         document.getElementById('userName').textContent = fullName;
         document.getElementById('userAvatar').textContent = initials;
-        document.getElementById('totalBalance').textContent = formatCurrency(demoUser.balance);
+        document.getElementById('totalBalance').textContent = formatCurrency(currentUser.balance);
         document.getElementById('accountNumber').textContent =
-          `Account: •••• •••• ${demoUser.accountNumber.slice(-4)}`;
+          `Account: •••• •••• ${currentUser.accountNumber.slice(-4)}`;
 
         // Fetch and render data from API
         await Promise.all([fetchTransactions(), fetchUserCards()]);
