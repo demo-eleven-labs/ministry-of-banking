@@ -348,9 +348,7 @@
             />
           </div>
 
-          <button type="submit" class="btn-login" id="loginButton">
-            Sign In
-          </button>
+          <button type="submit" class="btn-login" id="loginButton">Sign In</button>
         </form>
 
         <div class="demo-credentials">
@@ -368,7 +366,7 @@
       const errorMessage = document.getElementById('errorMessage');
       const loginButton = document.getElementById('loginButton');
 
-      loginForm.addEventListener('submit', async (e) => {
+      loginForm.addEventListener('submit', async e => {
         e.preventDefault();
 
         const email = document.getElementById('email').value.trim();

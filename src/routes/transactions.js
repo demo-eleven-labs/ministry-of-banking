@@ -49,11 +49,17 @@ router.get('/:userId', (req, res) => {
   }
 });
 
-// Search for specific transaction by date and description
-router.get('/:userId/search', (req, res) => {
+// Search for specific transaction by user email
+router.get('/search', (req, res) => {
   try {
-    const { userId } = req.params;
-    const { date, description, amount } = req.query;
+    const { email, date, description, amount } = req.query;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'email query parameter is required',
+      });
+    }
 
     if (!date && !description && !amount) {
       return res.status(400).json({
@@ -62,9 +68,21 @@ router.get('/:userId/search', (req, res) => {
       });
     }
 
+    // Get user by email
+    const database = require('../db/database');
+    const user = database.getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found with provided email',
+      });
+    }
+
     const transactionsData = readTransactions();
 
-    let userTransactions = transactionsData.transactions.filter(t => t.userId === userId);
+    // Filter transactions for this user
+    let userTransactions = transactionsData.transactions.filter(t => t.userId === user.id);
 
     if (date) {
       const searchDate = new Date(date).toISOString().split('T')[0];
@@ -89,7 +107,8 @@ router.get('/:userId/search', (req, res) => {
     res.json({
       success: true,
       data: {
-        userId: userId,
+        userId: user.id,
+        userEmail: email,
         searchCriteria: { date, description, amount },
         count: userTransactions.length,
         transactions: userTransactions,

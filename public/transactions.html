@@ -571,10 +571,7 @@
           case 'this-month':
             filtered = filtered.filter(txn => {
               const txnDate = new Date(txn.date);
-              return (
-                txnDate.getMonth() === currentMonth &&
-                txnDate.getFullYear() === currentYear
-              );
+              return txnDate.getMonth() === currentMonth && txnDate.getFullYear() === currentYear;
             });
             break;
           case 'all':
@@ -590,11 +587,11 @@
       function applyFilter(filter) {
         currentFilter = filter;
         const filteredTransactions = filterTransactions(filter);
-        
+
         // Update page title based on filter
         const pageTitle = document.querySelector('.page-title');
         const pageSubtitle = document.querySelector('.page-subtitle');
-        
+
         switch (filter) {
           case 'income':
             pageTitle.textContent = 'Income Transactions';
@@ -609,7 +606,7 @@
             pageSubtitle.textContent = 'Transactions awaiting completion';
             break;
           case 'this-month':
-            pageTitle.textContent = 'This Month\'s Transactions';
+            pageTitle.textContent = "This Month's Transactions";
             pageSubtitle.textContent = 'Transactions from the current month';
             break;
           case 'all':
@@ -618,7 +615,7 @@
             pageSubtitle.textContent = 'Complete transaction history for your account';
             break;
         }
-        
+
         renderAllTransactions(filteredTransactions);
       }
 
@@ -760,7 +757,9 @@
 
       // Toggle transaction details
       function toggleTransactionDetails(transactionId) {
-        const transactionItem = document.querySelector(`[onclick="toggleTransactionDetails('${transactionId}')"]`);
+        const transactionItem = document.querySelector(
+          `[onclick="toggleTransactionDetails('${transactionId}')"]`
+        );
         if (transactionItem) {
           transactionItem.classList.toggle('expanded');
         }
@@ -769,18 +768,18 @@
       // Filter functionality
       function setupFilters() {
         const filterButtons = document.querySelectorAll('.filter-btn');
-        
+
         filterButtons.forEach(btn => {
           btn.addEventListener('click', function () {
             // Remove active class from all buttons
             filterButtons.forEach(b => b.classList.remove('active'));
             // Add active class to clicked button
             this.classList.add('active');
-            
+
             // Get filter type from button text
             const filterText = this.textContent.trim().toLowerCase();
             let filterType = 'all';
-            
+
             if (filterText === 'income') {
               filterType = 'income';
             } else if (filterText === 'expenses') {
@@ -790,7 +789,7 @@
             } else if (filterText === 'this month') {
               filterType = 'this-month';
             }
-            
+
             // Apply the filter
             applyFilter(filterType);
           });

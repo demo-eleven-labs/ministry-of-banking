@@ -936,7 +936,14 @@
             <div id="cardsList" style="font-size: 0.75rem; color: var(--text-light)">
               Loading cards...
             </div>
-            <div style="font-size: 0.75rem; color: var(--primary); margin-top: 0.5rem; font-weight: 500;">
+            <div
+              style="
+                font-size: 0.75rem;
+                color: var(--primary);
+                margin-top: 0.5rem;
+                font-weight: 500;
+              "
+            >
               View all cards →
             </div>
           </a>
@@ -1096,10 +1103,7 @@
         // Filter transactions for current month
         const thisMonthTransactions = allTransactions.filter(txn => {
           const txnDate = new Date(txn.date);
-          return (
-            txnDate.getMonth() === currentMonth &&
-            txnDate.getFullYear() === currentYear
-          );
+          return txnDate.getMonth() === currentMonth && txnDate.getFullYear() === currentYear;
         });
 
         // Calculate income (credit transactions)
@@ -1114,8 +1118,7 @@
 
         // Calculate savings percentage
         // Savings = (Income - Expenses) / Income * 100
-        const savingsPercentage =
-          income > 0 ? Math.round(((income - expenses) / income) * 100) : 0;
+        const savingsPercentage = income > 0 ? Math.round(((income - expenses) / income) * 100) : 0;
 
         // Update UI
         document.getElementById('incomeValue').textContent = formatCurrency(income);
