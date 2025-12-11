@@ -25,30 +25,6 @@ function writeTransactions(data) {
   }
 }
 
-// Get all transactions for a user
-router.get('/:userId', (req, res) => {
-  try {
-    const { userId } = req.params;
-    const transactionsData = readTransactions();
-
-    const userTransactions = transactionsData.transactions.filter(t => t.userId === userId);
-
-    res.json({
-      success: true,
-      data: {
-        userId: userId,
-        count: userTransactions.length,
-        transactions: userTransactions,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
-
 // Search for specific transaction by user email
 router.get('/search', (req, res) => {
   try {
@@ -212,6 +188,30 @@ router.post('/dispute', (req, res) => {
         originalTransaction: originalTransaction,
         disputeTransaction: disputeTransaction,
         note: 'A support ticket should be created in Zendesk for review',
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Get all transactions for a user
+router.get('/:userId', (req, res) => {
+  try {
+    const { userId } = req.params;
+    const transactionsData = readTransactions();
+
+    const userTransactions = transactionsData.transactions.filter(t => t.userId === userId);
+
+    res.json({
+      success: true,
+      data: {
+        userId: userId,
+        count: userTransactions.length,
+        transactions: userTransactions,
       },
     });
   } catch (error) {
