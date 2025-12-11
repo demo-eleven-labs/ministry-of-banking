@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Cards - Ministry of Banking</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #3b82f6;
+        --primary-dark: #2563eb;
+        --primary-light: #1e3a8a;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --gold: #fbbf24;
+        --gold-light: #fcd34d;
+        --gold-dark: #f59e0b;
+        --text: #f1f5f9;
+        --text-light: #cbd5e1;
+        --text-lighter: #94a3b8;
+        --background: #0a1628;
+        --card-bg: rgba(15, 23, 42, 0.6);
+        --card-bg-solid: #1e293b;
+        --border: rgba(148, 163, 184, 0.1);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Background */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        background: linear-gradient(135deg, #0a1628 0%, #0f2847 50%, #1a365d 100%);
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        top: -10%;
+        right: -20%;
+        width: 140%;
+        height: 140%;
+        z-index: -1;
+        background:
+          radial-gradient(ellipse at 80% 20%, rgba(0, 102, 255, 0.4) 0%, transparent 50%),
+          radial-gradient(ellipse at 20% 80%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+          radial-gradient(ellipse at 60% 60%, rgba(236, 72, 153, 0.2) 0%, transparent 40%);
+        animation: waveMotion 25s ease-in-out infinite;
+        filter: blur(60px);
+      }
+
+      @keyframes waveMotion {
+        0%,
+        100% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+        33% {
+          transform: translate(-5%, 5%) rotate(5deg) scale(1.1);
+        }
+        66% {
+          transform: translate(5%, -5%) rotate(-5deg) scale(0.95);
+        }
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .logo {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05) rotate(5deg);
+      }
+
+      .logo img {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+      }
+
+      .brand-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .back-btn:hover {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: var(--primary);
+        transform: translateX(-3px);
+      }
+
+      .logout-btn {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--danger);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-left: 0.75rem;
+      }
+
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: var(--danger);
+        transform: translateY(-1px);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      /* Page Title */
+      .page-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+      }
+
+      .page-subtitle {
+        color: var(--text-light);
+        margin-bottom: 2rem;
+      }
+
+      /* Cards Grid */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .card-item {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+
+      .card-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+      }
+
+      .card-item.credit::before {
+        background: linear-gradient(90deg, var(--success) 0%, #059669 100%);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+      }
+
+      .card-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .card-status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .card-status-badge.active {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--success);
+      }
+
+      .card-status-badge.blocked {
+        background: rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+      }
+
+      .card-number {
+        font-size: 1.5rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: var(--text);
+        margin-bottom: 1rem;
+        font-family: 'Courier New', monospace;
+      }
+
+      .card-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .card-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+      }
+
+      .card-detail-label {
+        color: var(--text-lighter);
+        font-weight: 500;
+      }
+
+      .card-detail-value {
+        color: var(--text-light);
+        font-weight: 600;
+      }
+
+      .card-type-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+
+      .card-type-badge.debit {
+        background: rgba(59, 130, 246, 0.2);
+        color: var(--primary);
+      }
+
+      .card-type-badge.credit {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--success);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-light);
+      }
+
+      .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .empty-state-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+      }
+
+      .empty-state-text {
+        color: var(--text-lighter);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .page-title {
+          font-size: 1.5rem;
+        }
+
+        .cards-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-section">
+          <div class="logo">
+            <img src="logo.svg" alt="Ministry of Banking Logo" />
+          </div>
+          <div class="brand-name">Ministry of Banking</div>
+        </div>
+        <div class="header-actions">
+          <a href="/" class="back-btn"> ← Back to Dashboard </a>
+          <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+      </header>
+
+      <!-- Page Title -->
+      <h1 class="page-title">My Cards</h1>
+      <p class="page-subtitle">Manage and view all your payment cards</p>
+
+      <!-- Cards Grid -->
+      <div class="cards-grid" id="cardsGrid">
+        <div class="empty-state">
+          <div class="empty-state-icon">💳</div>
+          <div class="empty-state-title">Loading cards...</div>
+          <div class="empty-state-text">Please wait while we fetch your cards</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ElevenLabs AI Agent Widget -->
+    <elevenlabs-convai agent-id="agent_3501kbmer3rzeaz9hb07r6jtsbzq"></elevenlabs-convai>
+    <script
+      src="https://unpkg.com/@elevenlabs/convai-widget-embed"
+      async
+      type="text/javascript"
+    ></script>
+
+    <script>
+      // Get logged-in user from sessionStorage
+      let currentUser = null;
+      let userId = null;
+
+      // Check if user is logged in
+      function checkAuth() {
+        const userData = sessionStorage.getItem('user');
+        if (!userData) {
+          // Redirect to login if not authenticated
+          window.location.href = '/login';
+          return false;
+        }
+
+        try {
+          currentUser = JSON.parse(userData);
+          userId = currentUser.id;
+          return true;
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          sessionStorage.removeItem('user');
+          window.location.href = '/login';
+          return false;
+        }
+      }
+
+      // Logout handler
+      function handleLogout() {
+        sessionStorage.removeItem('user');
+        window.location.href = '/login';
+      }
+
+      // Format date
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        });
+      }
+
+      // Fetch user cards from API
+      async function fetchUserCards() {
+        if (!userId) return;
+
+        try {
+          const response = await fetch(`/api/cards/user/${userId}`);
+          const data = await response.json();
+
+          if (data.success && data.data.cards) {
+            renderCards(data.data.cards);
+          } else {
+            showEmptyState();
+          }
+        } catch (error) {
+          console.error('Error fetching cards:', error);
+          showEmptyState('Error loading cards. Please try again.');
+        }
+      }
+
+      // Render cards
+      function renderCards(cards) {
+        const container = document.getElementById('cardsGrid');
+
+        if (cards.length === 0) {
+          showEmptyState();
+          return;
+        }
+
+        const html = cards
+          .map(
+            card => `
+            <div class="card-item ${card.cardType}">
+              <div class="card-header">
+                <div class="card-brand">${card.cardBrand}</div>
+                <span class="card-status-badge ${card.status}">${card.status}</span>
+              </div>
+              <div class="card-number">${card.cardNumber}</div>
+              <div class="card-details">
+                <div class="card-detail-row">
+                  <span class="card-detail-label">Card Type</span>
+                  <span class="card-type-badge ${card.cardType}">${card.cardType}</span>
+                </div>
+                <div class="card-detail-row">
+                  <span class="card-detail-label">Cardholder</span>
+                  <span class="card-detail-value">${card.cardholderName}</span>
+                </div>
+                <div class="card-detail-row">
+                  <span class="card-detail-label">Expires</span>
+                  <span class="card-detail-value">${card.expiryDate}</span>
+                </div>
+                <div class="card-detail-row">
+                  <span class="card-detail-label">Issued</span>
+                  <span class="card-detail-value">${formatDate(card.issuedAt)}</span>
+                </div>
+                <div class="card-detail-row">
+                  <span class="card-detail-label">Card ID</span>
+                  <span class="card-detail-value" style="font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--text-lighter);">${card.id}</span>
+                </div>
+              </div>
+            </div>
+          `
+          )
+          .join('');
+
+        container.innerHTML = html;
+      }
+
+      // Show empty state
+      function showEmptyState(message = null) {
+        const container = document.getElementById('cardsGrid');
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">💳</div>
+            <div class="empty-state-title">No Cards Found</div>
+            <div class="empty-state-text">${message || 'You don\'t have any cards yet.'}</div>
+          </div>
+        `;
+      }
+
+      // Initialize
+      function initCardsPage() {
+        // Check authentication first
+        if (!checkAuth()) {
+          return; // Will redirect to login
+        }
+
+        // Fetch cards for the logged-in user
+        fetchUserCards();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCardsPage);
+      } else {
+        initCardsPage();
+      }
+    </script>
+  </body>
+</html>

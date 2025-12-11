@@ -53,6 +53,10 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'login.html'));
 });
 
+app.get('/cards', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'cards.html'));
+});
+
 app.get('/knowledge', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'knowledge_base.html'));
 });
