@@ -2,11 +2,11 @@
   "users": [
     {
       "id": "USER-1764938333746",
-      "accountNumber": "ACC-HLRSNVOSU",
+      "accountNumber": "ACC-1234",
       "firstName": "Amy",
       "lastName": "Johnson",
       "email": "amila@ministryofprogramming.com",
-      "phone": "061111111",
+      "phone": "+12444368890",
       "dateOfBirth": "1995-05-08",
       "address": "test address 123",
       "balance": 15000,
@@ -17,9 +17,9 @@
     },
     {
       "id": "USER-1765157736724",
-      "accountNumber": "ACC-1P8YQ5OFW",
-      "firstName": "Amila",
-      "lastName": "Jakubovic",
+      "accountNumber": "ACC-2233",
+      "firstName": "Jane",
+      "lastName": "Austen",
       "email": "amila1@ministryofprogramming.com",
       "phone": "+0038762345678",
       "dateOfBirth": "1990-01-01",
