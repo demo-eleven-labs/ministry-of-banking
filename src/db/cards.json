@@ -2,7 +2,7 @@
   "cards": [
     {
       "id": "CARD-1765260000001",
-      "userId": "USER-1765260000000",
+      "userId": "USER-1278960",
       "cardNumber": "**** **** **** 4892",
       "cardType": "debit",
       "cardBrand": "Visa",
@@ -13,7 +13,7 @@
     },
     {
       "id": "CARD-1765260000002",
-      "userId": "USER-1765260000000",
+      "userId": "USER-1278960",
       "cardNumber": "**** **** **** 1234",
       "cardType": "credit",
       "cardBrand": "Mastercard",
@@ -24,7 +24,7 @@
     },
     {
       "id": "CARD-1764938333747",
-      "userId": "USER-1764938333746",
+      "userId": "USER-5671160",
       "cardNumber": "**** **** **** 1098",
       "cardType": "debit",
       "cardBrand": "Visa",
@@ -35,18 +35,18 @@
     },
     {
       "id": "CARD-1765157736725",
-      "userId": "USER-1765157736724",
+      "userId": "USER-1234567",
       "cardNumber": "**** **** **** 0987",
       "cardType": "debit",
       "cardBrand": "Mastercard",
       "expiryDate": "11/2026",
       "status": "active",
       "issuedAt": "2025-01-25T11:45:00.000Z",
-      "cardholderName": "Amila Jakubovic"
+      "cardholderName": "Jane Austen"
     },
     {
       "id": "CARD-1765369169146",
-      "userId": "USER-1765260000000",
+      "userId": "USER-1278960",
       "cardNumber": "**** **** **** 7135",
       "cardType": "debit",
       "cardBrand": "Visa",
@@ -57,7 +57,7 @@
     },
     {
       "id": "CARD-1765369729942",
-      "userId": "USER-1765260000000",
+      "userId": "USER-1278960",
       "cardNumber": "**** **** **** 0611",
       "cardType": "credit",
       "cardBrand": "Visa",
@@ -68,7 +68,7 @@
     },
     {
       "id": "CARD-1765370943748",
-      "userId": "USER-1765260000000",
+      "userId": "USER-1278960",
       "cardNumber": "**** **** **** 0788",
       "cardType": "debit",
       "cardBrand": "Visa",
