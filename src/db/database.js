@@ -54,7 +54,7 @@ class Database {
       phone: userData.phone,
       dateOfBirth: userData.dateOfBirth,
       address: userData.address || '',
-      balance: 10000,
+      balance: 0,
       currency: 'USD',
       status: 'active',
       createdAt: new Date().toISOString(),
