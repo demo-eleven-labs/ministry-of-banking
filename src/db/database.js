@@ -74,24 +74,60 @@ class Database {
 
   // Get user by email
   getUserByEmail(email) {
+    const user = this.data.users.find(user => user.email.toLowerCase() === email.toLowerCase());
+    if (!user) return null;
+    const { otp, otpExpiresAt, ...userData } = user;
+    return userData;
+  }
+
+  // Internal: Get user with OTP data (for verification only)
+  _getUserWithOTP(email) {
     return this.data.users.find(user => user.email.toLowerCase() === email.toLowerCase());
   }
 
   // Get user by account number
   getUserAccountNumber(accountNumber) {
-    return this.data.users.find(
+    const user = this.data.users.find(
       user => user.accountNumber.toLowerCase() === accountNumber.toLowerCase()
     );
+    if (!user) return null;
+    const { otp, otpExpiresAt, ...userData } = user;
+    return userData;
   }
 
   // Get all users
   getAllUsers() {
-    return this.data.users;
+    return this.data.users.map(user => {
+      const { otp, otpExpiresAt, ...userData } = user;
+      return userData;
+    });
   }
 
   // Get user by ID
   getUserById(userId) {
-    return this.data.users.find(user => user.id === userId);
+    const user = this.data.users.find(user => user.id === userId);
+    if (!user) return null;
+    const { otp, otpExpiresAt, ...userData } = user;
+    return userData;
+  }
+
+  // Update user data (for OTP and other updates)
+  updateUser(email, updates) {
+    const userIndex = this.data.users.findIndex(
+      user => user.email.toLowerCase() === email.toLowerCase()
+    );
+
+    if (userIndex === -1) {
+      return null;
+    }
+
+    this.data.users[userIndex] = {
+      ...this.data.users[userIndex],
+      ...updates,
+    };
+
+    this.saveData();
+    return this.data.users[userIndex];
   }
 
   // Get all cards for a user

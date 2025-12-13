@@ -54,6 +54,7 @@ npm install
 PORT=3000
 NODE_ENV=development
 CORS_ORIGIN=*
+RESEND_API_KEY=re_your_api_key_here
 ```
 
 4. **Start the server**
@@ -71,8 +72,11 @@ npm run dev
 5. **Access the application**
 
 - Frontend Dashboard: `http://localhost:3000`
+- Login Page: `http://localhost:3000/login`
 - Admin Panel: `http://localhost:3000/admin`
-- Transaction History: `http://localhost:3000/transactions.html`
+- Cards Page: `http://localhost:3000/cards`
+- Transaction History: `http://localhost:3000/transactions`
+- Knowledge Base: `http://localhost:3000/knowledge_base`
 - API Health Check: `http://localhost:3000/api/health`
 
 ## 🎨 Code Formatting
@@ -111,16 +115,27 @@ npm run format:check
 ```
 ministry-of-banking/
 ├── src/
+│   ├── common/
+│   │   └── otp.js            # OTP generation and email sending (Resend)
 │   ├── db/
 │   │   ├── database.js       # Database operations and user management
-│   │   └── users.json        # User data storage (JSON-based)
+│   │   ├── users.json        # User data storage (JSON-based)
+│   │   ├── transactions.json # Transaction data storage
+│   │   └── cards.json        # Card data storage
 │   ├── routes/
 │   │   ├── account.js        # Account operations routes
-│   │   └── users.js          # User authentication & management routes
+│   │   ├── cards.js          # Card management routes
+│   │   ├── common.js         # Common routes
+│   │   ├── session.js        # Session management routes
+│   │   ├── transactions.js   # Transaction routes
+│   │   └── users.js          # User authentication & OTP verification routes
 │   └── server.js             # Express server configuration
 ├── public/
 │   ├── admin.html            # Admin panel for user management
+│   ├── cards.html            # Card management page
 │   ├── index.html            # Main dashboard interface
+│   ├── knowledge_base.html   # Agent knowledge base
+│   ├── login.html            # Login page
 │   └── transactions.html     # Transaction history page
 ├── package.json              # Project dependencies
 ├── .env                      # Environment variables
@@ -134,11 +149,28 @@ ministry-of-banking/
 - `POST /api/users/create` - Create new user account
 - `GET /api/users` - Get all users
 - `GET /api/users/:email` - Get user by email
+- `POST /api/users/send-otp` - Send OTP verification code to user's email
+- `POST /api/users/verify-identity` - Verify user identity with OTP, DOB, and account number
 
 ### Account Operations
 
 - `GET /api/account/:userId/balance` - Get account balance
 - `GET /api/account/:userId/transactions` - Get transaction history
+
+### Cards
+
+- `GET /api/cards/user/:userId` - Get all cards for a user
+- `GET /api/cards/user/:userId/active` - Get active cards for a user
+- `POST /api/cards/create` - Create a new card
+
+### Transactions
+
+- `GET /api/transactions/search` - Search transactions by email, date, description, or amount
+- `POST /api/transactions/dispute` - Create a dispute for a transaction
+
+### Session
+
+- `GET /api/session/current-user` - Get current user information
 
 ### System
 
@@ -160,6 +192,7 @@ ministry-of-banking/
 ### AI & Integration
 
 - **ElevenLabs** - AI voice agent
+- **Resend** - Email delivery service for OTP
 - **Zendesk** - Customer support integration
 - **Cal.com** - Calendar appointments integration
 
@@ -195,7 +228,7 @@ Consider deploying to:
 
 ### ElevenLabs Agent
 
-Update the agent ID in `public/index.html`:
+Update the agent ID in HTML files:
 
 ```html
 <elevenlabs-convai agent-id="YOUR_AGENT_ID"></elevenlabs-convai>
@@ -204,5 +237,11 @@ Update the agent ID in `public/index.html`:
 ### Default Users
 
 Sample users are stored in `src/db/users.json`. Modify as needed for testing.
+
+**Test User for Identity Verification:**
+
+- Email: `sarah.anderson@example.com`
+- Date of Birth: `1992-03-15`
+- Account Number: `ACC-4892`
 
 ---

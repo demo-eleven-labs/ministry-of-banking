@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const database = require('../db/database');
+const { sendOTP, isOTPValid } = require('../common/otp');
 
 // Get all users
 router.get('/', (req, res) => {
@@ -149,6 +150,139 @@ router.post('/create', async (req, res) => {
       success: true,
       message: 'User created successfully',
       data: newUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Send OTP code to user's email
+router.post('/send-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required',
+      });
+    }
+
+    // Check if user exists
+    const user = database.getUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found with this email',
+      });
+    }
+
+    // Generate and send OTP
+    const otpResult = await sendOTP(email);
+
+    if (!otpResult.success) {
+      return res.status(500).json({
+        success: false,
+        error: otpResult.message,
+      });
+    }
+
+    // Save OTP to user record
+    database.updateUser(email, {
+      otp: otpResult.otp,
+      otpExpiresAt: otpResult.expiresAt,
+    });
+
+    res.json({
+      success: true,
+      message: otpResult.message,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Verify user identity with OTP, date of birth, and account number
+router.post('/verify-identity', (req, res) => {
+  try {
+    const { email, dateOfBirth, accountNumber, otp } = req.body;
+
+    if (!email || !dateOfBirth || !accountNumber || !otp) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email, date of birth, account number, and OTP are required',
+      });
+    }
+
+    // Get user with OTP data for verification
+    const userWithOTP = database._getUserWithOTP(email);
+    if (!userWithOTP) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found',
+      });
+    }
+
+    if (userWithOTP.dateOfBirth !== dateOfBirth) {
+      return res.status(401).json({
+        success: false,
+        error: 'Date of birth does not match',
+      });
+    }
+
+    if (userWithOTP.accountNumber !== accountNumber) {
+      return res.status(401).json({
+        success: false,
+        error: 'Account number does not match',
+      });
+    }
+
+    if (!userWithOTP.otp) {
+      return res.status(401).json({
+        success: false,
+        error: 'No OTP found. Please request a new OTP code.',
+      });
+    }
+
+    if (!isOTPValid(userWithOTP.otpExpiresAt)) {
+      database.updateUser(email, {
+        otp: null,
+        otpExpiresAt: null,
+      });
+
+      return res.status(401).json({
+        success: false,
+        error: 'OTP has expired. Please request a new code.',
+      });
+    }
+
+    if (userWithOTP.otp !== otp) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid OTP code',
+      });
+    }
+
+    // All verifications passed
+    database.updateUser(email, {
+      otp: null,
+      otpExpiresAt: null,
+      lastVerifiedAt: new Date().toISOString(),
+    });
+
+    // Get clean user data without OTP fields
+    const userData = database.getUserByEmail(email);
+
+    res.json({
+      success: true,
+      message: 'Identity verified successfully',
+      data: userData,
     });
   } catch (error) {
     res.status(500).json({
