@@ -3,16 +3,14 @@ const router = express.Router();
 const database = require('../db/database');
 const fs = require('fs');
 const path = require('path');
+const { createErrorResponse, createSuccessResponse } = require('../common/errorCodes');
 
 // Get account balance by user ID
 router.get('/:userId/balance', (req, res) => {
   try {
     const user = database.getUserById(req.params.userId);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'Account not found',
-      });
+      return res.status(200).json(createErrorResponse('ACCOUNT_NOT_FOUND'));
     }
     res.json({
       success: true,
@@ -24,10 +22,7 @@ router.get('/:userId/balance', (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -36,10 +31,7 @@ router.get('/:userId/transactions', (req, res) => {
   try {
     const user = database.getUserById(req.params.userId);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'Account not found',
-      });
+      return res.status(200).json(createErrorResponse('ACCOUNT_NOT_FOUND'));
     }
 
     // Read transactions from JSON file
@@ -59,10 +51,7 @@ router.get('/:userId/transactions', (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 

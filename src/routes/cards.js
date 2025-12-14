@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const database = require('../db/database');
+const { createErrorResponse, createSuccessResponse } = require('../common/errorCodes');
 
 // Get all cards for a user
 router.get('/user/:userId', (req, res) => {
@@ -11,10 +12,7 @@ router.get('/user/:userId', (req, res) => {
       data: { cards },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -27,10 +25,7 @@ router.get('/user/:userId/active', (req, res) => {
       data: { cards, count: cards.length },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -40,27 +35,27 @@ router.post('/issue-card', (req, res) => {
     const { email, cardType, dateOfBirth, accountNumber } = req.body;
 
     if (!email || !dateOfBirth || !accountNumber) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email, date of birth, and account number are required for identity verification',
-      });
+      return res
+        .status(200)
+        .json(
+          createErrorResponse(
+            'MISSING_REQUIRED_FIELDS',
+            'Email, date of birth, and account number are required for identity verification'
+          )
+        );
     }
 
     // Find user by email
     const user = database.getUserByEmail(email);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found with this email',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('USER_NOT_FOUND', 'User not found with this email'));
     }
 
     // Identity verification
     if (user.dateOfBirth !== dateOfBirth || user.accountNumber !== accountNumber) {
-      return res.status(403).json({
-        success: false,
-        error: 'Identity verification failed. Date of birth or account number does not match.',
-      });
+      return res.status(200).json(createErrorResponse('IDENTITY_VERIFICATION_FAILED'));
     }
 
     // Create new card
@@ -84,10 +79,7 @@ router.post('/issue-card', (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -97,26 +89,26 @@ router.post('/block-card', (req, res) => {
     const { email, dateOfBirth, accountNumber, last4Digits, expiryDate } = req.body;
 
     if (!email || !dateOfBirth || !accountNumber || !last4Digits || !expiryDate) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email, date of birth, account number, last 4 digits, and expiry date are required',
-      });
+      return res
+        .status(200)
+        .json(
+          createErrorResponse(
+            'MISSING_REQUIRED_FIELDS',
+            'Email, date of birth, account number, last 4 digits, and expiry date are required'
+          )
+        );
     }
 
     // Find user by email
     const user = database.getUserByEmail(email);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found with this email',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('USER_NOT_FOUND', 'User not found with this email'));
     }
 
     if (user.dateOfBirth !== dateOfBirth || user.accountNumber !== accountNumber) {
-      return res.status(403).json({
-        success: false,
-        error: 'Identity verification failed. Date of birth or account number does not match.',
-      });
+      return res.status(200).json(createErrorResponse('IDENTITY_VERIFICATION_FAILED'));
     }
 
     // Find card by last 4 digits and expiry date
@@ -126,17 +118,11 @@ router.post('/block-card', (req, res) => {
     );
 
     if (!cardToBlock) {
-      return res.status(404).json({
-        success: false,
-        error: 'Card not found with the provided last 4 digits and expiry date',
-      });
+      return res.status(200).json(createErrorResponse('CARD_NOT_FOUND'));
     }
 
     if (cardToBlock.status === 'blocked') {
-      return res.status(400).json({
-        success: false,
-        error: 'This card is already blocked',
-      });
+      return res.status(200).json(createErrorResponse('CARD_ALREADY_BLOCKED'));
     }
 
     database.updateCardStatus(cardToBlock.id, 'blocked');
@@ -152,10 +138,7 @@ router.post('/block-card', (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 

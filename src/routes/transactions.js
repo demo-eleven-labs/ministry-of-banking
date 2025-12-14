@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const { createErrorResponse, createSuccessResponse } = require('../common/errorCodes');
 
 const TRANSACTIONS_FILE = path.join(__dirname, '../db/transactions.json');
 
@@ -31,17 +32,20 @@ router.get('/search', (req, res) => {
     const { email, date, description, amount } = req.query;
 
     if (!email) {
-      return res.status(400).json({
-        success: false,
-        error: 'email query parameter is required',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('MISSING_REQUIRED_FIELDS', 'email query parameter is required'));
     }
 
     if (!date && !description && !amount) {
-      return res.status(400).json({
-        success: false,
-        error: 'At least one search parameter (date, description, or amount) is required',
-      });
+      return res
+        .status(200)
+        .json(
+          createErrorResponse(
+            'MISSING_SEARCH_CRITERIA',
+            'At least one search parameter (date, description, or amount) is required.'
+          )
+        );
     }
 
     // Get user by email
@@ -49,10 +53,9 @@ router.get('/search', (req, res) => {
     const user = database.getUserByEmail(email);
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found with provided email',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('USER_NOT_FOUND', 'User not found with provided email'));
     }
 
     const transactionsData = readTransactions();
@@ -91,10 +94,7 @@ router.get('/search', (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -104,17 +104,15 @@ router.post('/dispute', (req, res) => {
     const { email, transactionId, reason } = req.body;
 
     if (!email) {
-      return res.status(400).json({
-        success: false,
-        error: 'email is required',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('MISSING_REQUIRED_FIELDS', 'email is required'));
     }
 
     if (!transactionId) {
-      return res.status(400).json({
-        success: false,
-        error: 'transactionId is required',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('MISSING_REQUIRED_FIELDS', 'transactionId is required'));
     }
 
     // Get user by email
@@ -122,10 +120,9 @@ router.post('/dispute', (req, res) => {
     const user = database.getUserByEmail(email);
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found with provided email',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('USER_NOT_FOUND', 'User not found with provided email'));
     }
 
     const transactionsData = readTransactions();
@@ -135,10 +132,7 @@ router.post('/dispute', (req, res) => {
     );
 
     if (!originalTransaction) {
-      return res.status(404).json({
-        success: false,
-        error: 'Transaction not found',
-      });
+      return res.status(200).json(createErrorResponse('TRANSACTION_NOT_FOUND'));
     }
 
     const existingDispute = transactionsData.transactions.find(
@@ -148,9 +142,8 @@ router.post('/dispute', (req, res) => {
     );
 
     if (existingDispute) {
-      return res.status(400).json({
-        success: false,
-        error: 'This transaction has already been disputed',
+      return res.status(200).json({
+        ...createErrorResponse('DISPUTE_ALREADY_EXISTS'),
         disputeTransaction: existingDispute,
       });
     }
@@ -175,10 +168,9 @@ router.post('/dispute', (req, res) => {
     const saved = writeTransactions(transactionsData);
 
     if (!saved) {
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to save dispute transaction',
-      });
+      return res
+        .status(500)
+        .json(createErrorResponse('INTERNAL_ERROR', 'Failed to save dispute transaction'));
     }
 
     res.json({
@@ -191,10 +183,7 @@ router.post('/dispute', (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -217,10 +206,7 @@ router.get('/:userId', (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -235,10 +221,7 @@ router.get('/:userId/transaction/:transactionId', (req, res) => {
     );
 
     if (!transaction) {
-      return res.status(404).json({
-        success: false,
-        error: 'Transaction not found',
-      });
+      return res.status(200).json(createErrorResponse('TRANSACTION_NOT_FOUND'));
     }
 
     res.json({
@@ -246,10 +229,7 @@ router.get('/:userId/transaction/:transactionId', (req, res) => {
       data: transaction,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const database = require('../db/database');
 const { sendOTP, isOTPValid } = require('../common/otp');
+const { createErrorResponse, createSuccessResponse } = require('../common/errorCodes');
 
 // Get all users
 router.get('/', (req, res) => {
@@ -13,10 +14,7 @@ router.get('/', (req, res) => {
       count: users.length,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -26,20 +24,14 @@ router.get('/filter/:accountNumber', (req, res) => {
     console.log('Fetching user with account number:', req.params.accountNumber);
     const user = database.getUserAccountNumber(req.params.accountNumber);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found',
-      });
+      return res.status(200).json(createErrorResponse('USER_NOT_FOUND'));
     }
     res.json({
       success: true,
       data: user,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -48,20 +40,14 @@ router.get('/:email', (req, res) => {
   try {
     const user = database.getUserByEmail(req.params.email);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found',
-      });
+      return res.status(200).json(createErrorResponse('USER_NOT_FOUND'));
     }
     res.json({
       success: true,
       data: user,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -71,10 +57,9 @@ router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email and password are required',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('MISSING_REQUIRED_FIELDS', 'Email and password are required'));
     }
 
     // Hardcoded password - should be "demo"
@@ -82,19 +67,13 @@ router.post('/login', (req, res) => {
 
     // Check if password matches hardcoded value
     if (password !== HARDCODED_PASSWORD) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid email or password',
-      });
+      return res.status(200).json(createErrorResponse('INVALID_CREDENTIALS'));
     }
 
     // Find user by email
     const user = database.getUserByEmail(email);
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid email or password',
-      });
+      return res.status(200).json(createErrorResponse('INVALID_CREDENTIALS'));
     }
 
     // Return user data (excluding sensitive information if needed)
@@ -104,10 +83,7 @@ router.post('/login', (req, res) => {
       data: user,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -117,25 +93,18 @@ router.post('/create', async (req, res) => {
     const { firstName, lastName, email, phone, dateOfBirth } = req.body;
 
     if (!firstName || !lastName || !email || !phone || !dateOfBirth) {
-      return res.status(400).json({
-        success: false,
-        error: 'All fields are required',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('MISSING_REQUIRED_FIELDS', 'All fields are required'));
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid email format',
-      });
+      return res.status(200).json(createErrorResponse('INVALID_EMAIL_FORMAT'));
     }
 
     if (database.userExists(email)) {
-      return res.status(409).json({
-        success: false,
-        error: 'User with this email already exists',
-      });
+      return res.status(200).json(createErrorResponse('USER_ALREADY_EXISTS'));
     }
 
     const newUser = database.createUser({
@@ -152,10 +121,7 @@ router.post('/create', async (req, res) => {
       data: newUser,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -165,29 +131,24 @@ router.post('/send-otp', async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email is required',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('MISSING_REQUIRED_FIELDS', 'Email is required'));
     }
 
     // Check if user exists
     const user = database.getUserByEmail(email);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found with this email',
-      });
+      return res
+        .status(200)
+        .json(createErrorResponse('USER_NOT_FOUND', 'User not found with this email'));
     }
 
     // Generate and send OTP
     const otpResult = await sendOTP(email);
 
     if (!otpResult.success) {
-      return res.status(500).json({
-        success: false,
-        error: otpResult.message,
-      });
+      return res.status(500).json(createErrorResponse('OTP_SEND_FAILED', otpResult.message));
     }
 
     // Save OTP to user record
@@ -201,10 +162,7 @@ router.post('/send-otp', async (req, res) => {
       message: otpResult.message,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
@@ -214,40 +172,32 @@ router.post('/verify-identity', (req, res) => {
     const { email, dateOfBirth, accountNumber, otp } = req.body;
 
     if (!email || !dateOfBirth || !accountNumber || !otp) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email, date of birth, account number, and OTP are required',
-      });
+      return res
+        .status(200)
+        .json(
+          createErrorResponse(
+            'MISSING_REQUIRED_FIELDS',
+            'Email, date of birth, account number, and OTP are required'
+          )
+        );
     }
 
     // Get user with OTP data for verification
     const userWithOTP = database._getUserWithOTP(email);
     if (!userWithOTP) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found',
-      });
+      return res.status(200).json(createErrorResponse('USER_NOT_FOUND'));
     }
 
     if (userWithOTP.dateOfBirth !== dateOfBirth) {
-      return res.status(401).json({
-        success: false,
-        error: 'Date of birth does not match',
-      });
+      return res.status(200).json(createErrorResponse('DATE_OF_BIRTH_MISMATCH'));
     }
 
     if (userWithOTP.accountNumber !== accountNumber) {
-      return res.status(401).json({
-        success: false,
-        error: 'Account number does not match',
-      });
+      return res.status(200).json(createErrorResponse('ACCOUNT_NUMBER_MISMATCH'));
     }
 
     if (!userWithOTP.otp) {
-      return res.status(401).json({
-        success: false,
-        error: 'No OTP found. Please request a new OTP code.',
-      });
+      return res.status(200).json(createErrorResponse('OTP_NOT_FOUND'));
     }
 
     if (!isOTPValid(userWithOTP.otpExpiresAt)) {
@@ -256,17 +206,11 @@ router.post('/verify-identity', (req, res) => {
         otpExpiresAt: null,
       });
 
-      return res.status(401).json({
-        success: false,
-        error: 'OTP has expired. Please request a new code.',
-      });
+      return res.status(200).json(createErrorResponse('OTP_EXPIRED'));
     }
 
     if (userWithOTP.otp !== otp) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid OTP code',
-      });
+      return res.status(200).json(createErrorResponse('INVALID_OTP'));
     }
 
     // All verifications passed
@@ -285,10 +229,7 @@ router.post('/verify-identity', (req, res) => {
       data: userData,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+    res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
   }
 });
 
