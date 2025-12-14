@@ -6,7 +6,7 @@
       "cardNumber": "**** **** **** 4892",
       "cardType": "debit",
       "cardBrand": "Visa",
-      "expiryDate": "12/2028",
+      "expiryDate": "12/28",
       "status": "active",
       "issuedAt": "2025-01-15T10:00:00.000Z",
       "cardholderName": "Sarah Anderson"
@@ -17,7 +17,7 @@
       "cardNumber": "**** **** **** 1234",
       "cardType": "credit",
       "cardBrand": "Mastercard",
-      "expiryDate": "06/2027",
+      "expiryDate": "06/27",
       "status": "active",
       "issuedAt": "2025-03-20T14:30:00.000Z",
       "cardholderName": "Sarah Anderson"
@@ -28,7 +28,7 @@
       "cardNumber": "**** **** **** 1098",
       "cardType": "debit",
       "cardBrand": "Visa",
-      "expiryDate": "09/2027",
+      "expiryDate": "09/27",
       "status": "active",
       "issuedAt": "2025-02-10T09:15:00.000Z",
       "cardholderName": "Amy Johnson"
@@ -39,7 +39,7 @@
       "cardNumber": "**** **** **** 0987",
       "cardType": "debit",
       "cardBrand": "Mastercard",
-      "expiryDate": "11/2026",
+      "expiryDate": "11/26",
       "status": "active",
       "issuedAt": "2025-01-25T11:45:00.000Z",
       "cardholderName": "Jane Austen"
