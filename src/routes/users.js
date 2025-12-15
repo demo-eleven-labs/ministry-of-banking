@@ -160,7 +160,6 @@ router.post('/send-otp', async (req, res) => {
     res.json({
       success: true,
       message: otpResult.message,
-      demoOTP: otpResult.otp, // For demo/testing, to be visible in browser console
     });
   } catch (error) {
     res.status(500).json(createErrorResponse('INTERNAL_ERROR'));
