@@ -7,16 +7,16 @@ router.post('/get-current-date', (req, res) => {
   const now = new Date();
   const formattedDate = now.toISOString().split('T')[0]; // YYYY-MM-DD
 
-  // Map number to weekday name
+  // Map number to weekday name (UTC)
   const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const dayName = weekdays[now.getDay()]; // 0-6 (0 = Sunday)
+  const dayName = weekdays[now.getUTCDay()]; // 0-6 (0 = Sunday) in UTC
 
   res.json({
     success: true,
     date: formattedDate,
     timestamp: now.toISOString(),
     day: dayName,
-    message: `Today is ${dayName}, ${formattedDate}`,
+    message: `Today is ${dayName}, ${formattedDate} (UTC)`,
   });
 });
 
@@ -35,12 +35,13 @@ router.post('/get-weekday-for-date', (req, res) => {
   try {
     const targetDate = new Date(date + 'T00:00:00Z');
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dayOfWeek = days[targetDate.getDay()];
+    const dayOfWeek = days[targetDate.getUTCDay()];
 
     res.json({
       success: true,
       date: date,
       weekday: dayOfWeek,
+      message: `The weekday for ${date} (UTC) is ${dayOfWeek}`,
     });
   } catch (error) {
     res
