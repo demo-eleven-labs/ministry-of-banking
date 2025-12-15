@@ -14,7 +14,7 @@ function generateOTP() {
 async function sendOTP(email) {
   try {
     const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiry
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
 
     console.log(
       `For Demo purposes: OTP for ${email}: ${otp} (expires at ${expiresAt.toISOString()})`
@@ -33,7 +33,7 @@ async function sendOTP(email) {
               <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
                 <h1 style="color: #1f2937; font-size: 32px; letter-spacing: 8px; margin: 0;">${otp}</h1>
               </div>
-              <p style="color: #6b7280;">This code will expire in 5 minutes.</p>
+              <p style="color: #6b7280;">This code will expire in 10 minutes.</p>
               <p style="color: #6b7280; font-size: 12px;">If you did not request this code, please ignore this email.</p>
             </div>
           `,
