@@ -42,8 +42,8 @@ class Database {
 
   // Create new user
   createUser(userData) {
-    const userId = `USER-${Date.now()}`;
-    const accountNumber = `ACC-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    const userId = `USER-${Math.floor(1000000 + Math.random() * 9000000)}`;
+    const accountNumber = `ACC-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const newUser = {
       id: userId,
