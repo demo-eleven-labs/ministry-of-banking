@@ -170,6 +170,24 @@
         margin-bottom: 0.5rem;
       }
 
+      .forgot-password {
+        text-align: center;
+        margin-top: -0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .forgot-password a {
+        color: var(--primary);
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .forgot-password a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+      }
+
       input[type='email'],
       input[type='password'] {
         width: 100%;
@@ -348,6 +366,10 @@
             />
           </div>
 
+          <div class="forgot-password">
+            <a href="#" id="forgotPasswordLink">Forgot password?</a>
+          </div>
+
           <button type="submit" class="btn-login" id="loginButton">Sign In</button>
         </form>
 
@@ -365,6 +387,13 @@
       const loginForm = document.getElementById('loginForm');
       const errorMessage = document.getElementById('errorMessage');
       const loginButton = document.getElementById('loginButton');
+      const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+
+      // Forgot password link (does nothing)
+      forgotPasswordLink.addEventListener('click', e => {
+        e.preventDefault();
+        // Intentionally does nothing
+      });
 
       loginForm.addEventListener('submit', async e => {
         e.preventDefault();
@@ -415,5 +444,13 @@
         }
       });
     </script>
+
+    <!-- ElevenLabs AI Agent Widget (Bottom-Right) -->
+    <elevenlabs-convai agent-id="agent_2001kcgw9f7qeyz8f7y17ycs54hd"></elevenlabs-convai>
+    <script
+      src="https://unpkg.com/@elevenlabs/convai-widget-embed"
+      async
+      type="text/javascript"
+    ></script>
   </body>
 </html>

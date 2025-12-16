@@ -29,7 +29,7 @@ function writeTransactions(data) {
 // Search for specific transaction by user email
 router.get('/search', (req, res) => {
   try {
-    const { email, date, description, amount } = req.query;
+    const { email, date, dateFrom, dateTo, description, amount } = req.query;
 
     if (!email) {
       return res
@@ -37,13 +37,25 @@ router.get('/search', (req, res) => {
         .json(createErrorResponse('MISSING_REQUIRED_FIELDS', 'email query parameter is required'));
     }
 
-    if (!date && !description && !amount) {
+    if (!date && !dateFrom && !dateTo && !description && !amount) {
       return res
         .status(200)
         .json(
           createErrorResponse(
             'MISSING_SEARCH_CRITERIA',
-            'At least one search parameter (date, description, or amount) is required.'
+            'At least one search parameter (date, dateFrom, dateTo, description, or amount) is required.'
+          )
+        );
+    }
+
+    // Validate that date and dateFrom/dateTo are not used together
+    if (date && (dateFrom || dateTo)) {
+      return res
+        .status(200)
+        .json(
+          createErrorResponse(
+            'INVALID_SEARCH_CRITERIA',
+            'Cannot use both "date" and "dateFrom/dateTo" parameters together. Use either exact date or date range.'
           )
         );
     }
@@ -71,6 +83,25 @@ router.get('/search', (req, res) => {
       });
     }
 
+    if (dateFrom || dateTo) {
+      userTransactions = userTransactions.filter(t => {
+        const txnDate = new Date(t.date).toISOString().split('T')[0];
+
+        if (dateFrom && dateTo) {
+          const fromDate = new Date(dateFrom).toISOString().split('T')[0];
+          const toDate = new Date(dateTo).toISOString().split('T')[0];
+          return txnDate >= fromDate && txnDate <= toDate;
+        } else if (dateFrom) {
+          const fromDate = new Date(dateFrom).toISOString().split('T')[0];
+          return txnDate >= fromDate;
+        } else if (dateTo) {
+          const toDate = new Date(dateTo).toISOString().split('T')[0];
+          return txnDate <= toDate;
+        }
+        return true;
+      });
+    }
+
     if (description) {
       const searchDesc = description.toLowerCase();
       userTransactions = userTransactions.filter(t =>
@@ -88,7 +119,7 @@ router.get('/search', (req, res) => {
       data: {
         userId: user.id,
         userEmail: email,
-        searchCriteria: { date, description, amount },
+        searchCriteria: { date, dateFrom, dateTo, description, amount },
         count: userTransactions.length,
         transactions: userTransactions,
       },
